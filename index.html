@@ -9,7 +9,7 @@
 <body class="bg-orange-50 text-gray-800">
 
   <!-- Header -->
-  <header class="bg-white shadow p-4 flex justify-between items-center">
+  <header class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-10">
     <h1 class="text-xl font-bold text-orange-500">ExtraFood.com</h1>
     <nav class="flex gap-6 text-sm">
       <a href="#about" class="hover:text-orange-500">About</a>
@@ -26,13 +26,45 @@
   </section>
 
   <!-- About -->
-  <section id="about" class="bg-white py-12 px-6 text-center">
-    <h3 class="text-2xl font-bold mb-3">What We Do</h3>
-    <p class="text-gray-500 max-w-xl mx-auto">Extra Food Collection is a platform that connects wedding halls, caterers, and event organizers with NGOs, shelters, and volunteers to redistribute leftover food efficiently.</p>
+  <section id="about" class="bg-white py-16 px-6">
+    <h3 class="text-2xl font-bold text-center mb-3">What We Do</h3>
+    <p class="text-gray-500 max-w-xl mx-auto text-center mb-10">Extra Food Collection connects wedding halls, caterers, and event organizers with NGOs, shelters, and volunteers to redistribute leftover food efficiently.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div class="bg-orange-50 rounded-xl p-6 text-center shadow-sm">
+        <div class="text-4xl mb-3"></div>
+        <h4 class="font-semibold mb-1">Wedding Halls</h4>
+        <p class="text-gray-400 text-sm">Venues register surplus food available after events.</p>
+      </div>
+      <div class="bg-orange-50 rounded-xl p-6 text-center shadow-sm">
+        <div class="text-4xl mb-3"></div>
+        <h4 class="font-semibold mb-1">Caterers</h4>
+        <p class="text-gray-400 text-sm">Caterers list leftover prepared food for quick pickup.</p>
+      </div>
+      <div class="bg-orange-50 rounded-xl p-6 text-center shadow-sm">
+        <div class="text-4xl mb-3"></div>
+        <h4 class="font-semibold mb-1">NGOs & Shelters</h4>
+        <p class="text-gray-400 text-sm">Organizations receive food notifications and claim pickups.</p>
+      </div>
+      <div class="bg-orange-50 rounded-xl p-6 text-center shadow-sm">
+        <div class="text-4xl mb-3"></div>
+        <h4 class="font-semibold mb-1">Volunteers</h4>
+        <p class="text-gray-400 text-sm">Volunteers coordinate pickup and delivery of food.</p>
+      </div>
+      <div class="bg-orange-50 rounded-xl p-6 text-center shadow-sm">
+        <div class="text-4xl mb-3"></div>
+        <h4 class="font-semibold mb-1">Event Organizers</h4>
+        <p class="text-gray-400 text-sm">Organizers post surplus food from any large event.</p>
+      </div>
+      <div class="bg-orange-500 rounded-xl p-6 text-center text-white shadow-sm">
+        <div class="text-4xl mb-3"></div>
+        <h4 class="font-semibold mb-1">Our Goal</h4>
+        <p class="text-orange-100 text-sm">Zero food waste. Every meal counts.</p>
+      </div>
+    </div>
   </section>
 
   <!-- How It Works -->
-  <section id="how" class="py-12 px-6">
+  <section id="how" class="py-16 px-6">
     <h3 class="text-2xl font-bold text-center mb-8">How It Works</h3>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
       <div class="bg-white rounded-xl p-6 shadow text-center">
@@ -54,19 +86,33 @@
   </section>
 
   <!-- Contact -->
-  <section id="contact" class="bg-orange-500 text-white py-12 px-6 text-center">
+  <section id="contact" class="bg-orange-500 text-white py-16 px-6 text-center">
     <h3 class="text-2xl font-bold mb-3">Get Involved</h3>
     <p class="mb-6 text-orange-100">Enter your email to join our network.</p>
-    <div class="flex justify-center gap-3 flex-wrap">
-      <input type="email" placeholder="Your email" class="px-4 py-2 rounded-full text-gray-800 outline-none" />
-      <button class="bg-white text-orange-500 px-6 py-2 rounded-full font-semibold hover:bg-orange-100">Sign Up</button>
+    <div class="flex justify-center gap-3 flex-wrap max-w-md mx-auto">
+      <input id="emailInput" type="email" placeholder="Your email" class="flex-1 px-4 py-2 rounded-full text-gray-800 outline-none" />
+      <button onclick="submitForm()" class="bg-white text-orange-500 px-6 py-2 rounded-full font-semibold hover:bg-orange-100">Sign Up</button>
     </div>
+    <p id="formMsg" class="mt-4 text-white font-medium hidden">Thank you! We'll be in touch.</p>
   </section>
 
   <!-- Footer -->
   <footer class="bg-gray-800 text-gray-400 text-center py-4 text-sm">
     <p>ExtraFood | MCA — Full Stack Development | CHRIST University</p>
   </footer>
+
+  <script>
+    function submitForm() {
+      const email = document.getElementById('emailInput').value;
+      const msg = document.getElementById('formMsg');
+      if (email === '' || !email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+      msg.classList.remove('hidden');
+      document.getElementById('emailInput').value = '';
+    }
+  </script>
 
 </body>
 </html>
