@@ -3,172 +3,609 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Extra Food Collection</title>
-<script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-orange-50 text-gray-800">
+<title>HopeShare — Give What You Can</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<header class="bg-white shadow p-4 flex justify-between items-center sticky top-0">
-<h1 class="text-xl font-bold text-orange-500">ExtraFood.com</h1>
-<nav class="flex gap-6">
-<a href="#about">About</a>
-<a href="#how">How It Works</a>
-<a href="#contact">Contact</a>
-</nav>
+  :root {
+    --navy:   #1A2B4A;
+    --sky-bg: #E8F4FD;
+    --coral:  #FF6B35;
+    --green:  #2ECC71;
+    --white:  #FFFFFF;
+    --off:    #F8F9FA;
+    --muted:  #6B7280;
+    --border: #E5E7EB;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    color: var(--navy);
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 900; font-size: 1.4rem;
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .logo span { color: var(--coral); }
+  nav { display: flex; gap: 2rem; align-items: center; }
+  nav a {
+    text-decoration: none; color: var(--navy);
+    font-size: 0.9rem; font-weight: 500;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--coral); }
+  .nav-cta {
+    background: var(--coral); color: var(--white) !important;
+    padding: 0.5rem 1.2rem; border-radius: 8px;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: #e05a28 !important; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #2C4A7C 60%, #1A2B4A 100%);
+    min-height: 88vh;
+    display: flex; align-items: center;
+    padding: 5% 5%;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-content { position: relative; max-width: 600px; }
+  .hero-eyebrow {
+    display: inline-block;
+    background: rgba(255,107,53,0.2);
+    color: var(--coral);
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.35rem 0.9rem; border-radius: 20px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    font-weight: 900; line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 em { color: var(--coral); font-style: normal; }
+  .hero p {
+    font-size: 1.1rem; color: rgba(255,255,255,0.75);
+    margin-bottom: 2rem; max-width: 480px;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--coral); color: var(--white);
+    padding: 0.85rem 2rem; border-radius: 10px;
+    font-weight: 600; font-size: 1rem;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform 0.15s, background 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: #e05a28; transform: translateY(-2px); }
+  .btn-ghost {
+    background: transparent; color: var(--white);
+    padding: 0.85rem 2rem; border-radius: 10px;
+    font-weight: 600; font-size: 1rem;
+    text-decoration: none; border: 2px solid rgba(255,255,255,0.35); cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--white); transform: translateY(-2px); }
+
+  /* Live ticker */
+  .hero-stats {
+    position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 1.2rem;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px; padding: 1.2rem 1.6rem;
+    min-width: 170px; backdrop-filter: blur(6px);
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem; font-weight: 700; color: var(--white);
+    display: block;
+  }
+  .stat-num.coral { color: var(--coral); }
+  .stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* ── CATEGORIES ── */
+  .section { padding: 5rem 5%; }
+  .section-header { text-align: center; margin-bottom: 3rem; }
+  .section-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700; margin-bottom: 0.6rem;
+  }
+  .section-header p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto; }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+  }
+  .cat-card {
+    background: var(--off); border-radius: 16px;
+    padding: 2rem 1.5rem; text-align: center;
+    border: 2px solid transparent;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .cat-card:hover {
+    border-color: var(--coral);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(255,107,53,0.12);
+  }
+  .cat-icon { font-size: 2.4rem; margin-bottom: 0.8rem; display: block; }
+  .cat-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .cat-card p { font-size: 0.82rem; color: var(--muted); }
+
+  /* ── HOW IT WORKS ── */
+  .how-bg { background: var(--sky-bg); }
+  .steps {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0; position: relative;
+  }
+  .step {
+    padding: 2rem 1.5rem; text-align: center; position: relative;
+  }
+  .step:not(:last-child)::after {
+    content: '→';
+    position: absolute; right: -0.4rem; top: 2.2rem;
+    font-size: 1.4rem; color: var(--coral);
+    display: block;
+  }
+  .step-num {
+    width: 52px; height: 52px;
+    background: var(--coral); color: var(--white);
+    border-radius: 50%;
+    font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+  }
+  .step h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .step p { font-size: 0.85rem; color: var(--muted); }
+
+  /* ── WHO WE SERVE ── */
+  .roles-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .role-card {
+    border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--border);
+    transition: box-shadow 0.2s;
+  }
+  .role-card:hover { box-shadow: 0 16px 48px rgba(26,43,74,0.1); }
+  .role-header {
+    padding: 1.8rem 1.8rem 1rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .role-avatar {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  .role-avatar.food { background: #FFF3E0; }
+  .role-avatar.clothes { background: #E8F5E9; }
+  .role-avatar.ngo { background: #E3F2FD; }
+  .role-card h3 { font-size: 1.05rem; font-weight: 600; }
+  .role-card .role-tag {
+    font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .role-body { padding: 0 1.8rem 1.8rem; }
+  .role-body p { font-size: 0.88rem; color: var(--muted); margin-bottom: 1rem; }
+  .role-features { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .role-features li { font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+  .role-features li::before { content: '✓'; color: var(--green); font-weight: 700; }
+
+  /* ── IMPACT ── */
+  .impact-bg { background: var(--navy); }
+  .impact-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+  .impact-card {
+    text-align: center; padding: 2rem 1rem;
+    border-radius: 16px; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .impact-num {
+    font-family: 'Fraunces', serif;
+    font-size: 2.8rem; font-weight: 700; color: var(--coral);
+    display: block;
+  }
+  .impact-label { font-size: 0.85rem; color: rgba(255,255,255,0.65); margin-top: 0.3rem; }
+  .impact-bg .section-header h2 { color: var(--white); }
+  .impact-bg .section-header p { color: rgba(255,255,255,0.6); }
+
+  /* ── CTA / CONTACT ── */
+  .cta-section { background: var(--off); }
+  .cta-box {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: 0 4px 24px rgba(26,43,74,0.08);
+    max-width: 560px; margin: 0 auto; text-align: center;
+  }
+  .cta-box h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem; font-weight: 700; margin-bottom: 0.7rem;
+  }
+  .cta-box p { color: var(--muted); margin-bottom: 1.8rem; font-size: 0.95rem; }
+  .input-row { display: flex; gap: 0.6rem; }
+  .input-row input {
+    flex: 1; padding: 0.8rem 1rem;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 0.95rem; font-family: 'Inter', sans-serif;
+    outline: none; transition: border-color 0.2s;
+  }
+  .input-row input:focus { border-color: var(--coral); }
+  .success-msg {
+    display: none; margin-top: 1rem;
+    background: rgba(46,204,113,0.1); color: #1a7a3c;
+    border-radius: 8px; padding: 0.7rem 1rem;
+    font-size: 0.9rem; font-weight: 600;
+  }
+
+  .util-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
+  .util-btn {
+    background: var(--off); border: 1.5px solid var(--border);
+    color: var(--navy); padding: 0.6rem 1.2rem;
+    border-radius: 8px; font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .util-btn:hover { border-color: var(--coral); background: rgba(255,107,53,0.05); }
+  #location-display {
+    margin-top: 0.8rem; font-size: 0.82rem; color: var(--muted);
+    min-height: 1.2rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy); color: rgba(255,255,255,0.6);
+    text-align: center; padding: 2rem 5%;
+    font-size: 0.82rem;
+  }
+  footer strong { color: var(--white); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero-stats { display: none; }
+    .hero { min-height: 70vh; }
+    .step:not(:last-child)::after { display: none; }
+    .input-row { flex-direction: column; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes countUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .stat-num { animation: countUp 0.8s ease both; }
+
+  /* ── NGO PARTNERS TEASER (homepage) ── */
+  .ngo-teaser-bg { background: var(--off); }
+  .ngo-teaser-cta { text-align: center; margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<header>
+  <a href="#" class="logo">Hope<span>Share</span></a>
+  <nav>
+    <a href="#about">Who We Serve</a>
+    <a href="#how">How It Works</a>
+    <a href="ngo-partners.html">Partner NGOs</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="#contact" class="nav-cta">Donate Now</a>
+  </nav>
 </header>
 
-<section class="text-center py-10">
-<img src="images/hero.png" class="mx-auto rounded-xl shadow-lg w-11/12 md:w-3/4 mb-8" alt="Hero">
-<h2 class="text-4xl font-bold">Don't Waste Food. Share It.</h2>
-<p class="mt-4 text-lg text-gray-600">
-Connecting Wedding Halls, Caterers and NGOs to reduce food waste.
-</p>
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-content">
+    <span class="hero-eyebrow">Community Giving Platform</span>
+    <h1>Give what you can.<br><em>Change a life.</em></h1>
+    <p>HopeShare connects donors with verified NGOs — donate food, clothes, books, medicine, and more. No item too small.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Start Donating</a>
+      <a href="#how" class="btn-ghost">See How It Works</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-card">
+      <span class="stat-num coral" id="counter-meals">0</span>
+      <span class="stat-label">Meals Shared Today</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" id="counter-items">0</span>
+      <span class="stat-label">Items Donated</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num coral" id="counter-ngos">0</span>
+      <span class="stat-label">NGOs Connected</span>
+    </div>
+  </div>
 </section>
 
-<section id="about" class="bg-white py-10 px-6">
-<h3 class="text-2xl font-bold text-center mb-6">What We Do</h3>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-<div class="bg-orange-100 rounded-xl p-5 shadow text-center">
-<img src="images/weddinghall.jpeg" class="w-40 h-40 rounded-full object-cover mx-auto mb-4">
-<h4 class="text-xl font-bold">Wedding Halls</h4>
-<p>Register surplus food after events.</p>
-</div>
-
-<div class="bg-orange-100 rounded-xl p-5 shadow text-center">
-<img src="images/caterer.jpg" class="w-40 h-40 rounded-full object-cover mx-auto mb-4">
-<h4 class="text-xl font-bold">Caterers</h4>
-<p>Post leftover prepared food.</p>
-</div>
-
-<div class="bg-orange-100 rounded-xl p-5 shadow text-center">
-<img src="images/ngo.png" class="w-40 h-40 rounded-full object-cover mx-auto mb-4">
-<h4 class="text-xl font-bold">NGOs</h4>
-<p>Receive and distribute food.</p>
-</div>
-
-</div>
+<!-- ── DONATION CATEGORIES ── -->
+<section class="section" id="about">
+  <div class="section-header">
+    <h2>What Can You Donate?</h2>
+    <p>HopeShare accepts all kinds of surplus and secondhand items — not just food.</p>
+  </div>
+  <div class="categories-grid">
+    <div class="cat-card">
+      <span class="cat-icon"></span>
+      <h3>Food</h3>
+      <p>Surplus meals from events, caterers, and restaurants</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon"></span>
+      <h3>Clothes</h3>
+      <p>Gently used clothing and shoes for all ages</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon"></span>
+      <h3>Books</h3>
+      <p>Textbooks, storybooks, and educational materials</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon"></span>
+      <h3>Medicine</h3>
+      <p>Unused, unexpired medicines and health supplies</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon"></span>
+      <h3>Furniture</h3>
+      <p>Household items, bedding, and basic furnishings</p>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon"></span>
+      <h3>Toys & More</h3>
+      <p>Toys, stationery, and anything useful to a family in need</p>
+    </div>
+  </div>
 </section>
 
-<section id="how" class="py-10 px-6">
-<h3 class="text-2xl font-bold text-center mb-6">How It Works</h3>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-<div class="bg-white p-4 rounded shadow text-center">1. Register</div>
-<div class="bg-white p-4 rounded shadow text-center">2. Post Surplus Food</div>
-<div class="bg-white p-4 rounded shadow text-center">3. Deliver Food</div>
-</div>
-
-<h3 class="text-xl font-bold text-center mt-10">Food Distribution Video</h3>
-
-<video controls class="mx-auto mt-6 rounded-xl shadow-lg w-3/4">
-<source src="videos/food.mp4" type="video/mp4">
-Your browser does not support video.
-</video>
-
+<!-- ── HOW IT WORKS ── -->
+<section class="section how-bg" id="how">
+  <div class="section-header">
+    <h2>How It Works</h2>
+    <p>Three simple steps from your doorstep to someone in need.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Register</h3>
+      <p>Sign up as a Donor, Venue, or NGO. Takes under a minute.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Post a Donation</h3>
+      <p>List what you have — item type, quantity, and pickup window.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>NGO Collects</h3>
+      <p>A verified NGO nearby is notified and arranges pickup.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Track Impact</h3>
+      <p>Get a confirmation and see the difference your donation made.</p>
+    </div>
+  </div>
 </section>
 
-<section id="contact" class="bg-orange-500 text-white py-10 px-6 text-center">
+<!-- ── WHO WE SERVE ── -->
+<section class="section">
+  <div class="section-header">
+    <h2>Who We Serve</h2>
+    <p>HopeShare works for everyone on both sides of generosity.</p>
+  </div>
+  <div class="roles-grid">
 
-<h3 class="text-2xl font-bold">Get Involved</h3>
+    <div class="role-card">
+      <div class="role-header">
+        <div class="role-avatar food">🍽️</div>
+        <div>
+          <div class="role-tag">Donors</div>
+          <h3>Event Venues & Caterers</h3>
+        </div>
+      </div>
+      <div class="role-body">
+        <p>Post surplus food and items left over from events before they go to waste.</p>
+        <ul class="role-features">
+          <li>Quick listing in under 2 minutes</li>
+          <li>Scheduled pickup coordination</li>
+          <li>Donation certificate issued</li>
+        </ul>
+      </div>
+    </div>
 
-<div class="flex justify-center gap-3 flex-wrap mt-5">
-<input id="emailInput" type="email" placeholder="Enter Email"
-class="px-4 py-2 rounded text-black">
+    <div class="role-card">
+      <div class="role-header">
+        <div class="role-avatar clothes"></div>
+        <div>
+          <div class="role-tag">Individuals</div>
+          <h3>Households & Individuals</h3>
+        </div>
+      </div>
+      <div class="role-body">
+        <p>Clear out clothes, books, or furniture and give them a second life.</p>
+        <ul class="role-features">
+          <li>Donate multiple categories at once</li>
+          <li>Drop-off or home pickup options</li>
+          <li>Real-time status updates</li>
+        </ul>
+      </div>
+    </div>
 
-<button onclick="submitForm()" class="bg-white text-orange-500 px-5 py-2 rounded">
-Sign Up
-</button>
-</div>
+    <div class="role-card">
+      <div class="role-header">
+        <div class="role-avatar ngo"></div>
+        <div>
+          <div class="role-tag">Receivers</div>
+          <h3>NGOs & Shelters</h3>
+        </div>
+      </div>
+      <div class="role-body">
+        <p>Receive timely alerts for available donations in your service area.</p>
+        <ul class="role-features">
+          <li>Location-based matching</li>
+          <li>Category filters by need</li>
+          <li>Verified and trusted network</li>
+        </ul>
+      </div>
+    </div>
 
-<p id="formMsg" class="hidden mt-4 font-bold">
-Registration Successful!
-</p>
-
-<button onclick="getLocation()" class="bg-white text-orange-500 px-5 py-2 rounded mt-5">
-Share My Location
-</button>
-
-<p id="location" class="mt-4"></p>
-
-<button onclick="copyNumber()" class="bg-black text-white px-5 py-2 rounded mt-3">
-Copy NGO Contact
-</button>
-
-<audio id="successAudio">
-<source src="audio/success.mp3" type="audio/mpeg">
-</audio>
-
+  </div>
 </section>
 
-<footer class="bg-gray-800 text-white text-center py-4">
-ExtraFood | MCA — Full Stack Development | CHRIST University
+<!-- ── IMPACT NUMBERS ── -->
+<section class="section impact-bg">
+  <div class="section-header">
+    <h2>Our Impact So Far</h2>
+    <p>Small acts of giving, measured in real change.</p>
+  </div>
+  <div class="impact-grid">
+    <div class="impact-card">
+      <span class="impact-num">12,400+</span>
+      <div class="impact-label">Meals Distributed</div>
+    </div>
+    <div class="impact-card">
+      <span class="impact-num">3,200+</span>
+      <div class="impact-label">Clothes Donated</div>
+    </div>
+    <div class="impact-card">
+      <span class="impact-num">840+</span>
+      <div class="impact-label">Books Shared</div>
+    </div>
+    <div class="impact-card">
+      <span class="impact-num">58</span>
+      <div class="impact-label">NGO Partners</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── NGO PARTNERS TEASER ── -->
+<section class="section ngo-teaser-bg" id="ngo-teaser">
+  <div class="section-header">
+    <h2>Trusted by 58+ NGOs Across Bengaluru</h2>
+    <p>Every donation is routed through a verified, trusted NGO partner — see who we work with.</p>
+  </div>
+  <div class="ngo-teaser-cta">
+    <a href="ngo-partners.html" class="btn-primary">View Our NGO Partners →</a>
+  </div>
+</section>
+
+<!-- ── CONTACT / CTA ── -->
+<section class="section cta-section" id="contact">
+  <div class="cta-box">
+    <h2>Join HopeShare</h2>
+    <p>Sign up to start donating or receiving. We'll connect you with the right NGO in your area.</p>
+    <div class="input-row">
+      <input type="email" id="emailInput" placeholder="Enter your email">
+      <button class="btn-primary" onclick="submitForm()">Sign Up</button>
+    </div>
+    <div class="success-msg" id="formMsg"> You're in! We'll be in touch soon.</div>
+
+    <div class="util-btns">
+      <button class="util-btn" onclick="getLocation()"> Share Location</button>
+      <button class="util-btn" onclick="copyNumber()"> Copy NGO Helpline</button>
+    </div>
+    <div id="location-display"></div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <strong>HopeShare</strong> — MCA · Full Stack Development · CHRIST University · 2026
 </footer>
 
+<audio id="successAudio"><source src="audio/success.mp3" type="audio/mpeg"></audio>
+
 <script>
+  /* ── Animated counters ── */
+  function animateCount(id, target, duration) {
+    const el = document.getElementById(id);
+    let start = 0, step = target / (duration / 16);
+    const tick = () => {
+      start = Math.min(start + step, target);
+      el.textContent = Math.floor(start).toLocaleString('en-IN');
+      if (start < target) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('load', () => {
+    animateCount('counter-meals', 247, 1800);
+    animateCount('counter-items', 1053, 2000);
+    animateCount('counter-ngos', 58, 1200);
+  });
 
-window.onload=function(){
-let email=localStorage.getItem("email");
-if(email){
-document.getElementById("emailInput").value=email;
-console.log("Session User:",sessionStorage.getItem("currentUser"));
-}
-}
+  /* ── Form ── */
+  window.onload = function() {
+    const saved = localStorage.getItem('hs_email');
+    if (saved) document.getElementById('emailInput').value = saved;
+  };
 
-function submitForm(){
+  function submitForm() {
+    const input = document.getElementById('emailInput');
+    const email = input.value.trim();
+    if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+    localStorage.setItem('hs_email', email);
+    sessionStorage.setItem('currentUser', email);
+    document.getElementById('formMsg').style.display = 'block';
+    const audio = document.getElementById('successAudio');
+    if (audio) audio.play().catch(() => {});
+    if (Notification.permission === 'granted') {
+      new Notification('Welcome to HopeShare!', { body: 'Your registration was successful.' });
+    } else {
+      Notification.requestPermission();
+    }
+    input.value = '';
+  }
 
-let email=document.getElementById("emailInput").value;
+  /* ── Geolocation ── */
+  function getLocation() {
+    const display = document.getElementById('location-display');
+    if (!navigator.geolocation) { display.textContent = 'Geolocation not supported.'; return; }
+    display.textContent = 'Locating…';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        display.textContent = `📍 Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`;
+      },
+      () => { display.textContent = 'Unable to retrieve location.'; }
+    );
+  }
 
-if(email=="" || !email.includes("@")){
-alert("Enter a valid email");
-return;
-}
-
-localStorage.setItem("email",email);
-
-// Session Storage API
-sessionStorage.setItem("currentUser",email);
-
-document.getElementById("formMsg").classList.remove("hidden");
-
-document.getElementById("successAudio").play();
-
-if(Notification.permission==="granted"){
-new Notification("Registration Successful!");
-}else{
-Notification.requestPermission();
-}
-
-document.getElementById("emailInput").value="";
-}
-
-function getLocation(){
-
-if(navigator.geolocation){
-navigator.geolocation.getCurrentPosition(showPosition);
-}else{
-alert("Geolocation not supported");
-}
-
-}
-
-function showPosition(position){
-
-document.getElementById("location").innerHTML=
-"Latitude : "+position.coords.latitude+
-"<br>Longitude : "+position.coords.longitude;
-
-}
-
-function copyNumber(){
-
-navigator.clipboard.writeText("9876543210");
-alert("NGO Contact Copied!");
-
-}
 
 </script>
-
 </body>
 </html>
