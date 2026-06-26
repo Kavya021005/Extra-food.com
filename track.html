@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Donation — HopeShare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --navy:#1A2B4A; --coral:#FF6B35; --green:#2ECC71; --white:#FFFFFF; --off:#F8F9FA; --muted:#6B7280; --border:#E5E7EB; }
+  body { font-family:'Inter',sans-serif; background:var(--off); color:var(--navy); line-height:1.6; }
+
+  /* NAV */
+  header { position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:64px; }
+  .logo { font-family:'Fraunces',serif;font-weight:900;font-size:1.4rem;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:0.5rem; }
+  .logo-vid { width:30px;height:30px;border-radius:7px;object-fit:cover; }
+  .logo span { color:var(--coral); }
+  nav { display:flex;gap:2rem;align-items:center; }
+  nav a { text-decoration:none;color:var(--navy);font-size:0.9rem;font-weight:500;transition:color 0.2s; }
+  nav a:hover { color:var(--coral); }
+  .nav-cta { background:var(--coral);color:var(--white)!important;padding:0.5rem 1.2rem;border-radius:8px; }
+
+  /* PAGE HERO */
+  .page-hero { background:linear-gradient(135deg,var(--navy) 0%,#2C4A7C 60%,#1A2B4A 100%);padding:3.5rem 5%;text-align:center; }
+  .page-hero-eyebrow { display:inline-block;background:rgba(255,107,53,0.2);color:var(--coral);font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.35rem 0.9rem;border-radius:20px;margin-bottom:1.2rem; }
+  .page-hero h1 { font-family:'Fraunces',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;color:var(--white);margin-bottom:0.6rem; }
+  .page-hero p { color:rgba(255,255,255,0.7);max-width:500px;margin:0 auto; }
+
+  /* SEARCH BOX */
+  .search-wrap { max-width:600px;margin:-28px auto 0;position:relative;padding:0 5%; }
+  .search-card { background:white;border-radius:16px;padding:1.5rem;box-shadow:0 8px 32px rgba(26,43,74,0.15);display:flex;gap:0.8rem; }
+  .search-card input { flex:1;padding:0.8rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.95rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s; }
+  .search-card input:focus { border-color:var(--coral); }
+  .btn-track { background:var(--coral);color:white;border:none;border-radius:10px;padding:0.8rem 1.4rem;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background 0.2s; }
+  .btn-track:hover { background:#e05a28; }
+
+  /* MAIN */
+  .main-wrap { max-width:800px;margin:2.5rem auto;padding:0 5% 4rem; }
+
+  /* EMPTY STATE */
+  #emptyState { text-align:center;padding:4rem 2rem; }
+  #emptyState .empty-icon { font-size:4rem;margin-bottom:1rem; }
+  #emptyState h3 { font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:0.5rem; }
+  #emptyState p { color:var(--muted); }
+
+  /* DONATION HEADER CARD */
+  #trackResult { display:none; }
+  .donation-header { background:white;border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(26,43,74,0.08);margin-bottom:1.5rem; }
+  .donation-header-top { display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap; }
+  .did-badge { background:var(--off);border:2px dashed var(--coral);border-radius:10px;padding:0.6rem 1rem;font-family:'Fraunces',serif;font-size:1.4rem;font-weight:900;color:var(--coral); }
+  .status-chip { padding:0.4rem 1rem;border-radius:20px;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em; }
+  .status-chip.submitted { background:#FFF3E0;color:#E65100; }
+  .status-chip.notified { background:#E3F2FD;color:#1565C0; }
+  .status-chip.pickup { background:#EDE7F6;color:#4527A0; }
+  .status-chip.delivered { background:#E8F5E9;color:#1B5E20; }
+  .status-chip.confirmed { background:#E8F5E9;color:#1B5E20; }
+  .donation-meta { display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.8rem;margin-top:1.5rem; }
+  .meta-item { background:var(--off);border-radius:10px;padding:0.8rem;font-size:0.82rem; }
+  .meta-item .mk { color:var(--muted);margin-bottom:0.2rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em; }
+  .meta-item .mv { font-weight:600;color:var(--navy); }
+
+  /* TIMELINE */
+  .timeline-card { background:white;border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(26,43,74,0.08);margin-bottom:1.5rem; }
+  .timeline-card h3 { font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;margin-bottom:1.5rem; }
+  .timeline { display:flex;flex-direction:column;gap:0; }
+  .tl-item { display:flex;gap:1.2rem;position:relative; }
+  .tl-item:not(:last-child) .tl-line { position:absolute;left:19px;top:40px;bottom:-8px;width:2px;background:var(--border);z-index:0; }
+  .tl-item:not(:last-child).done .tl-line { background:var(--green); }
+  .tl-dot-wrap { display:flex;flex-direction:column;align-items:center;flex-shrink:0;position:relative;z-index:1; }
+  .tl-dot { width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;border:2px solid var(--border);background:var(--off); }
+  .tl-item.done .tl-dot { background:#E8F5E9;border-color:var(--green); }
+  .tl-item.active .tl-dot { background:#FFF3E0;border-color:var(--coral);animation:pulse-dot 1.5s infinite; }
+  @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(255,107,53,0.3)} 50%{box-shadow:0 0 0 8px rgba(255,107,53,0)} }
+  .tl-content { padding-bottom:1.8rem;flex:1; }
+  .tl-title { font-weight:700;font-size:0.95rem;margin-bottom:0.2rem; }
+  .tl-desc { font-size:0.83rem;color:var(--muted); }
+  .tl-time { font-size:0.75rem;color:var(--coral);font-weight:600;margin-top:0.3rem; }
+  .tl-photo { margin-top:0.8rem;border-radius:10px;overflow:hidden;max-width:300px; }
+  .tl-photo img { width:100%;height:180px;object-fit:cover; }
+  .tl-photo-label { font-size:0.72rem;color:var(--muted);padding:0.4rem 0.6rem;background:var(--off); }
+
+  /* PROOF PHOTOS */
+  .proof-card { background:white;border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(26,43,74,0.08);margin-bottom:1.5rem; }
+  .proof-card h3 { font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;margin-bottom:1rem; }
+  .proof-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem; }
+  .proof-item { border-radius:12px;overflow:hidden;border:1.5px solid var(--border); }
+  .proof-img { width:100%;height:160px;object-fit:cover;background:var(--off);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--border); }
+  .proof-img.pending-img { display:flex; }
+  .proof-img img { width:100%;height:100%;object-fit:cover; }
+  .proof-label { padding:0.6rem;font-size:0.78rem;font-weight:600; }
+  .proof-label .pl-stage { color:var(--muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em; }
+  .proof-status { display:inline-block;font-size:0.68rem;padding:0.15rem 0.5rem;border-radius:20px;margin-top:0.3rem; }
+  .proof-status.done { background:#E8F5E9;color:#1B5E20; }
+  .proof-status.pending { background:#F3F4F6;color:var(--muted); }
+
+  /* CERTIFICATE */
+  .cert-card { background:linear-gradient(135deg,#0D1F38,#1A2B4A);border-radius:20px;padding:2rem;color:white;margin-bottom:1.5rem; }
+  .cert-card h3 { font-family:'Fraunces',serif;font-size:1.2rem;margin-bottom:0.4rem; }
+  .cert-card p { color:rgba(255,255,255,0.65);font-size:0.85rem;margin-bottom:1.5rem; }
+  .cert-btn { background:var(--coral);color:white;border:none;border-radius:10px;padding:0.75rem 1.6rem;font-size:0.9rem;font-weight:700;cursor:pointer;transition:background 0.2s; }
+  .cert-btn:hover { background:#e05a28; }
+  .cert-btn:disabled { background:#555;cursor:not-allowed; }
+
+  /* CANVAS CERTIFICATE (hidden, used for generation) */
+  #certCanvas { display:none; }
+
+  /* SHARE */
+  .share-row { display:flex;gap:0.8rem;flex-wrap:wrap;margin-top:1rem; }
+  .share-btn { padding:0.5rem 1rem;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:white;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.2s; }
+  .share-btn:hover { background:rgba(255,255,255,0.15); }
+
+  footer { background:var(--navy);color:rgba(255,255,255,0.6);text-align:center;padding:2rem 5%;font-size:0.82rem; }
+  footer strong { color:white; }
+
+  /* TOAST */
+  #toast { position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy);color:white;padding:1rem 1.4rem;border-radius:14px;font-size:0.88rem;z-index:999;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,0.2);transform:translateY(100px);opacity:0;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  #toast.show { transform:translateY(0);opacity:1; }
+  #toast .t-title { font-weight:700;margin-bottom:0.25rem; }
+  #toast .t-body { color:rgba(255,255,255,0.75);font-size:0.8rem; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header>
+  <a href="index.html" class="logo">
+    <video class="logo-vid" autoplay muted playsinline loop><source src="Untitled_design__9_.mp4" type="video/mp4"></video>
+    Hope<span>Share</span>
+  </a>
+  <nav>
+    <a href="index.html#about">Who We Serve</a>
+    <a href="index.html#how">How It Works</a>
+    <a href="ngo-partners.html">Partner NGOs</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="donate.html" class="nav-cta">Donate Now</a>
+  </nav>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <span class="page-hero-eyebrow">Live Tracking</span>
+  <h1>Track Your Donation</h1>
+  <p>Enter your Donation ID to see real-time status, proof photos at every stage, and download your impact certificate.</p>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-card">
+    <input type="text" id="trackInput" placeholder="Enter Donation ID  e.g. HS-2026-12345" />
+    <button class="btn-track" onclick="loadDonation()">Track →</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
+  <!-- EMPTY / INTRO STATE -->
+  <div id="emptyState">
+    <div class="empty-icon">📦</div>
+    <h3>Enter your Donation ID above</h3>
+    <p>Your ID was shown on the donation confirmation screen and starts with <strong>HS-2026-</strong></p>
+    <p style="margin-top:1rem;font-size:0.85rem;color:var(--muted)">Don't have one yet? <a href="donate.html" style="color:var(--coral);font-weight:600">Submit a donation →</a></p>
+  </div>
+
+  <!-- TRACK RESULT -->
+  <div id="trackResult">
+
+    <!-- HEADER CARD -->
+    <div class="donation-header">
+      <div class="donation-header-top">
+        <div>
+          <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">Donation ID</div>
+          <div class="did-badge" id="r_id">HS-2026-00000</div>
+        </div>
+        <div class="status-chip" id="r_chip">Submitted</div>
+      </div>
+      <div class="donation-meta">
+        <div class="meta-item"><div class="mk">Donor</div><div class="mv" id="r_name">–</div></div>
+        <div class="meta-item"><div class="mk">Category</div><div class="mv" id="r_cat">–</div></div>
+        <div class="meta-item"><div class="mk">Item</div><div class="mv" id="r_item">–</div></div>
+        <div class="meta-item"><div class="mk">Quantity</div><div class="mv" id="r_qty">–</div></div>
+        <div class="meta-item"><div class="mk">Submitted On</div><div class="mv" id="r_date">–</div></div>
+        <div class="meta-item"><div class="mk">NGO Assigned</div><div class="mv" id="r_ngo">–</div></div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline-card">
+      <h3>📍 Live Status Timeline</h3>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- PROOF PHOTOS -->
+    <div class="proof-card">
+      <h3>📸 Photo Proof at Every Stage</h3>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.2rem">Photos uploaded by you, the pickup driver, and the NGO — so you know your donation truly reached someone.</p>
+      <div class="proof-grid" id="proofGrid"></div>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div class="cert-card">
+      <h3>🏅 Download Your Impact Certificate</h3>
+      <p id="certMsg">Your personalised certificate will be available once the NGO confirms delivery.</p>
+      <button class="cert-btn" id="certBtn" onclick="downloadCertificate()">⬇ Download Certificate</button>
+      <div class="share-row">
+        <button class="share-btn" onclick="copyTrackLink()">🔗 Copy Tracking Link</button>
+        <button class="share-btn" onclick="shareDonation()">📤 Share</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CANVAS for certificate generation -->
+<canvas id="certCanvas"></canvas>
+
+<footer>
+  <strong>HopeShare</strong> — MCA · Full Stack Development · CHRIST University · 2026
+</footer>
+
+<div id="toast"><div class="t-title" id="tTitle"></div><div class="t-body" id="tBody"></div></div>
+
+<script>
+// ── TOAST ──
+function toast(title, body='') {
+  const el = document.getElementById('toast');
+  document.getElementById('tTitle').textContent = title;
+  document.getElementById('tBody').textContent = body;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ── SIMULATED STAGES ──
+// In a real app these would come from a backend.
+// Here we simulate progression based on time elapsed since submission.
+function simulateStages(donation) {
+  const now = Date.now();
+  const submitted = new Date(donation.date).getTime();
+  const elapsed = (now - submitted) / 1000; // seconds elapsed
+
+  // Simulate: each stage unlocks after N seconds (demo purposes)
+  // In real: backend would set these timestamps
+  const stages = [
+    {
+      key: 'submitted',
+      icon: '📝',
+      title: 'Donation Submitted',
+      desc: `${donation.name} submitted ${donation.qty} of ${donation.item}.`,
+      time: new Date(donation.date).toLocaleString(),
+      done: true,
+      active: false,
+      photo: null,
+      photoLabel: 'Donor photo'
+    },
+    {
+      key: 'notified',
+      icon: '📢',
+      title: 'NGO Notified',
+      desc: 'Nearest verified NGO has been alerted and is reviewing the donation.',
+      time: elapsed > 30 ? new Date(submitted + 30000).toLocaleString() : null,
+      done: elapsed > 30,
+      active: elapsed <= 30,
+      photo: null,
+      photoLabel: 'NGO acknowledgement'
+    },
+    {
+      key: 'pickup',
+      icon: '🚗',
+      title: 'Pickup in Progress',
+      desc: 'Our volunteer is on the way to collect your donation.',
+      time: elapsed > 90 ? new Date(submitted + 90000).toLocaleString() : null,
+      done: elapsed > 90,
+      active: elapsed > 30 && elapsed <= 90,
+      photo: null,
+      photoLabel: 'Pickup photo (driver)'
+    },
+    {
+      key: 'delivered',
+      icon: '🏠',
+      title: 'Delivered to NGO',
+      desc: 'Your donation has been delivered to the NGO centre.',
+      time: elapsed > 180 ? new Date(submitted + 180000).toLocaleString() : null,
+      done: elapsed > 180,
+      active: elapsed > 90 && elapsed <= 180,
+      photo: null,
+      photoLabel: 'Delivery photo (NGO)'
+    },
+    {
+      key: 'confirmed',
+      icon: '✅',
+      title: 'Impact Confirmed',
+      desc: 'Your donation has been distributed to people in need. Thank you!',
+      time: elapsed > 300 ? new Date(submitted + 300000).toLocaleString() : null,
+      done: elapsed > 300,
+      active: elapsed > 180 && elapsed <= 300,
+      photo: null,
+      photoLabel: 'People served (NGO)'
+    }
+  ];
+  return stages;
+}
+
+function getStatusLabel(stages) {
+  const last = [...stages].reverse().find(s => s.done);
+  const map = { submitted:'Submitted', notified:'NGO Notified', pickup:'Pickup In Progress', delivered:'Delivered', confirmed:'Impact Confirmed' };
+  return last ? map[last.key] : 'Submitted';
+}
+
+// ── RENDER TIMELINE ──
+function renderTimeline(stages) {
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = stages.map((s, i) => `
+    <div class="tl-item ${s.done?'done':''} ${s.active?'active':''}">
+      <div class="tl-dot-wrap">
+        <div class="tl-dot">${s.done ? '✓' : s.icon}</div>
+        ${i < stages.length-1 ? '<div class="tl-line"></div>' : ''}
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">${s.title}</div>
+        <div class="tl-desc">${s.desc}</div>
+        ${s.time ? `<div class="tl-time">🕐 ${s.time}</div>` : '<div class="tl-time" style="color:var(--muted)">Pending…</div>'}
+        ${s.done && s.photo ? `<div class="tl-photo"><img src="${s.photo}" alt="${s.photoLabel}"><div class="tl-photo-label">📸 ${s.photoLabel}</div></div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── RENDER PROOF GRID ──
+function renderProof(stages, donationHasPhoto) {
+  const grid = document.getElementById('proofGrid');
+  const proofStages = [
+    { key:'submitted', label:'Your Photo', sublabel:'Uploaded by donor', icon:'📷' },
+    { key:'pickup', label:'Pickup Photo', sublabel:'Uploaded by driver', icon:'🚗' },
+    { key:'delivered', label:'Delivery Photo', sublabel:'Uploaded by NGO', icon:'🏠' },
+    { key:'confirmed', label:'Impact Photo', sublabel:'People being served', icon:'🍽️' }
+  ];
+
+  grid.innerHTML = proofStages.map(ps => {
+    const stage = stages.find(s => s.key === ps.key);
+    const isDone = stage?.done;
+    const hasActualPhoto = (ps.key === 'submitted' && donationHasPhoto) || (isDone && stage?.photo);
+
+    return `
+      <div class="proof-item">
+        <div class="proof-img ${!hasActualPhoto?'pending-img':''}">
+          ${hasActualPhoto && stage?.photo
+            ? `<img src="${stage.photo}" alt="${ps.label}">`
+            : `<span>${isDone ? '🖼️' : ps.icon}</span>`
+          }
+        </div>
+        <div class="proof-label">
+          <div style="font-weight:700;font-size:0.85rem">${ps.label}</div>
+          <div class="pl-stage">${ps.sublabel}</div>
+          <div class="proof-status ${isDone?'done':'pending'}">${isDone ? '✅ Uploaded' : '⏳ Pending'}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── LOAD DONATION ──
+let currentDonation = null;
+let currentID = null;
+
+function loadDonation() {
+  const input = document.getElementById('trackInput').value.trim().toUpperCase();
+  if (!input) { alert('Please enter a Donation ID'); return; }
+
+  // Try to load from localStorage (donations made on this browser)
+  let donation = null;
+  const stored = localStorage.getItem(`hs_donation_${input}`);
+  if (stored) {
+    donation = JSON.parse(stored);
+  } else {
+    // Demo: create a mock donation for any entered ID so tracker works as demo
+    donation = {
+      id: input,
+      name: 'Demo Donor',
+      phone: '9876543210',
+      cat: 'food',
+      item: 'Biryani & Dal',
+      qty: '25 kg',
+      type: 'Wedding Hall / Event Venue',
+      date: new Date(Date.now() - 120000).toISOString(), // 2 min ago
+      status: 'submitted',
+      hasPhoto: false
+    };
+  }
+
+  currentDonation = donation;
+  currentID = input;
+
+  const stages = simulateStages(donation);
+  const statusLabel = getStatusLabel(stages);
+
+  // Populate header
+  document.getElementById('r_id').textContent = donation.id;
+  document.getElementById('r_name').textContent = donation.name;
+  document.getElementById('r_cat').textContent = (donation.cat || 'food').charAt(0).toUpperCase() + (donation.cat||'food').slice(1);
+  document.getElementById('r_item').textContent = donation.item;
+  document.getElementById('r_qty').textContent = donation.qty;
+  document.getElementById('r_date').textContent = new Date(donation.date).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  document.getElementById('r_ngo').textContent = stages[1].done ? 'Akshaya Patra, Bengaluru' : 'Being matched…';
+
+  // Status chip
+  const chip = document.getElementById('r_chip');
+  const chipKey = [...stages].reverse().find(s=>s.done)?.key || 'submitted';
+  chip.textContent = statusLabel;
+  chip.className = `status-chip ${chipKey}`;
+
+  // Render
+  renderTimeline(stages);
+  renderProof(stages, donation.hasPhoto);
+
+  // Certificate button
+  const allDone = stages[stages.length-1].done;
+  const certBtn = document.getElementById('certBtn');
+  const certMsg = document.getElementById('certMsg');
+  if (allDone) {
+    certBtn.disabled = false;
+    certMsg.textContent = '🎉 Your donation reached people in need. Download your certificate!';
+  } else {
+    certBtn.disabled = true;
+    certMsg.textContent = 'Certificate will be available once the NGO confirms delivery.';
+  }
+
+  // Show result
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('trackResult').style.display = 'block';
+
+  // Update URL without reload
+  const url = new URL(window.location);
+  url.searchParams.set('id', input);
+  history.pushState({}, '', url);
+
+  toast('✅ Donation found!', `Showing status for ${input}`);
+
+  // Auto-refresh every 30s to simulate live updates
+  setTimeout(() => { if (currentID === input) loadDonation(); }, 30000);
+}
+
+// ── CERTIFICATE GENERATION (Canvas API) ──
+function downloadCertificate() {
+  const d = currentDonation;
+  if (!d) return;
+
+  const canvas = document.getElementById('certCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 1200;
+  canvas.height = 800;
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, 1200, 800);
+  bg.addColorStop(0, '#0D1F38');
+  bg.addColorStop(0.5, '#1A2B4A');
+  bg.addColorStop(1, '#2C4A7C');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 1200, 800);
+
+  // Decorative circles
+  ctx.globalAlpha = 0.05;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(100, 100, 200, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(1100, 700, 250, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Border
+  ctx.strokeStyle = '#FF6B35';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(30, 30, 1140, 740);
+  ctx.strokeStyle = 'rgba(255,107,53,0.3)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(40, 40, 1120, 720);
+
+  // Logo text
+  ctx.fillStyle = '#FF6B35';
+  ctx.font = 'bold 38px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('HopeShare', 600, 100);
+
+  // Title
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 52px Georgia, serif';
+  ctx.fillText('Certificate of Impact', 600, 200);
+
+  // Subtitle line
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '22px Arial, sans-serif';
+  ctx.fillText('This certifies that the following donation was successfully delivered', 600, 255);
+  ctx.fillText('and reached people in need through HopeShare & partner NGOs.', 600, 285);
+
+  // Divider
+  ctx.strokeStyle = '#FF6B35';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(200, 310); ctx.lineTo(1000, 310); ctx.stroke();
+
+  // Donor name
+  ctx.fillStyle = '#FF6B35';
+  ctx.font = 'italic bold 44px Georgia, serif';
+  ctx.fillText(d.name, 600, 390);
+
+  // Details
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.font = '24px Arial, sans-serif';
+  const cat = (d.cat||'food').charAt(0).toUpperCase() + (d.cat||'food').slice(1);
+  ctx.fillText(`Donated: ${d.item} · Qty: ${d.qty} · Category: ${cat}`, 600, 450);
+  ctx.fillText(`Donation ID: ${d.id}`, 600, 490);
+  const dateStr = new Date(d.date).toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' });
+  ctx.fillText(`Date: ${dateStr}`, 600, 530);
+  ctx.fillText('Delivered through: Akshaya Patra Foundation, Bengaluru', 600, 570);
+
+  // Divider
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(200, 610); ctx.lineTo(1000, 610); ctx.stroke();
+
+  // Footer
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '18px Arial, sans-serif';
+  ctx.fillText('HopeShare · CHRIST University MCA · Full Stack Development · 2026', 600, 660);
+  ctx.fillText('Verified and digitally issued by HopeShare Platform', 600, 690);
+
+  // Stamp
+  ctx.fillStyle = 'rgba(46,204,113,0.15)';
+  ctx.beginPath(); ctx.arc(600, 755, 35, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#2ECC71'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(600, 755, 35, 0, Math.PI*2); ctx.stroke();
+  ctx.fillStyle = '#2ECC71'; ctx.font='bold 18px Arial'; ctx.fillText('✓ VERIFIED', 600, 762);
+
+  // Download
+  const link = document.createElement('a');
+  link.download = `HopeShare_Certificate_${d.id}.png`;
+  link.href = canvas.toDataURL('image/png', 1.0);
+  link.click();
+
+  toast('🏅 Certificate downloaded!', `${d.name}'s certificate saved as PNG.`);
+}
+
+// ── SHARE / COPY ──
+function copyTrackLink() {
+  const url = `${location.origin}${location.pathname}?id=${currentID}`;
+  navigator.clipboard.writeText(url).then(() => toast('🔗 Link copied!', 'Share this to let others see your donation status.'));
+}
+
+async function shareDonation() {
+  const url = `${location.origin}${location.pathname}?id=${currentID}`;
+  if (navigator.share) {
+    await navigator.share({ title: 'Track my HopeShare donation', text: `I donated via HopeShare! Track it here: ${currentID}`, url });
+  } else {
+    copyTrackLink();
+  }
+}
+
+// ── ON LOAD ──
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if (id) {
+    document.getElementById('trackInput').value = id;
+    loadDonation();
+  }
+});
+</script>
+</body>
+</html>

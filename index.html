@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HopeShare — Give What You Can</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --navy:   #1A2B4A;
     --sky-bg: #E8F4FD;
@@ -19,15 +18,74 @@
     --muted:  #6B7280;
     --border: #E5E7EB;
   }
+  body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--navy); line-height: 1.6; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--white);
-    color: var(--navy);
-    line-height: 1.6;
+  /* ══════════════════════════════════════════
+     SPLASH SCREEN
+  ══════════════════════════════════════════ */
+  #splash {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--navy);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.2rem;
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+  }
+  #splash.hide { opacity: 0; visibility: hidden; }
+
+  .splash-logo-wrap {
+    display: flex; align-items: center; gap: 0.6rem;
+    animation: splashPop 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  /* Video logo */
+  #splash-video {
+    width: 72px; height: 72px;
+    border-radius: 18px;
+    object-fit: cover;
+    box-shadow: 0 0 40px rgba(255,107,53,0.5);
+  }
+  .splash-wordmark {
+    font-family: 'Fraunces', serif;
+    font-size: 2.8rem; font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+  .splash-wordmark em { color: var(--coral); font-style: normal; }
+
+  .splash-tagline {
+    font-size: 0.85rem; color: rgba(255,255,255,0.5);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    animation: splashFadeUp 0.6s 0.4s ease both;
   }
 
-  /* ── NAV ── */
+  .splash-bar-wrap {
+    width: 180px; height: 3px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px; overflow: hidden;
+    animation: splashFadeUp 0.6s 0.5s ease both;
+  }
+  .splash-bar {
+    height: 100%; background: var(--coral);
+    border-radius: 10px;
+    animation: splashLoad 2.2s ease forwards;
+  }
+
+  @keyframes splashPop {
+    from { opacity:0; transform: scale(0.7); }
+    to   { opacity:1; transform: scale(1); }
+  }
+  @keyframes splashFadeUp {
+    from { opacity:0; transform: translateY(10px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  @keyframes splashLoad {
+    from { width: 0%; }
+    to   { width: 100%; }
+  }
+
+  /* ══════════════════════════════════════════
+     NAV
+  ══════════════════════════════════════════ */
   header {
     position: sticky; top: 0; z-index: 100;
     background: rgba(255,255,255,0.95);
@@ -40,67 +98,50 @@
   .logo {
     font-family: 'Fraunces', serif;
     font-weight: 900; font-size: 1.4rem;
-    color: var(--navy);
-    text-decoration: none;
+    color: var(--navy); text-decoration: none;
+    display: flex; align-items: center; gap: 0.5rem;
   }
+  .logo-vid { width: 30px; height: 30px; border-radius: 7px; object-fit: cover; }
   .logo span { color: var(--coral); }
   nav { display: flex; gap: 2rem; align-items: center; }
-  nav a {
-    text-decoration: none; color: var(--navy);
-    font-size: 0.9rem; font-weight: 500;
-    transition: color 0.2s;
-  }
+  nav a { text-decoration: none; color: var(--navy); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
   nav a:hover { color: var(--coral); }
-  .nav-cta {
-    background: var(--coral); color: var(--white) !important;
-    padding: 0.5rem 1.2rem; border-radius: 8px;
-    transition: background 0.2s !important;
-  }
+  .nav-cta { background: var(--coral); color: var(--white) !important; padding: 0.5rem 1.2rem; border-radius: 8px; }
   .nav-cta:hover { background: #e05a28 !important; }
 
-  /* ── HERO ── */
+  /* ══════════════════════════════════════════
+     HERO
+  ══════════════════════════════════════════ */
   .hero {
     background: linear-gradient(135deg, var(--navy) 0%, #2C4A7C 60%, #1A2B4A 100%);
-    min-height: 88vh;
-    display: flex; align-items: center;
-    padding: 5% 5%;
-    position: relative; overflow: hidden;
+    min-height: 88vh; display: flex; align-items: center;
+    padding: 5%; position: relative; overflow: hidden;
   }
   .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    content: ''; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='20' fill='%23ffffff' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E");
   }
   .hero-content { position: relative; max-width: 600px; }
   .hero-eyebrow {
-    display: inline-block;
-    background: rgba(255,107,53,0.2);
-    color: var(--coral);
-    font-size: 0.8rem; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 0.35rem 0.9rem; border-radius: 20px;
-    margin-bottom: 1.5rem;
+    display: inline-block; background: rgba(255,107,53,0.2); color: var(--coral);
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.35rem 0.9rem; border-radius: 20px; margin-bottom: 1.5rem;
   }
   .hero h1 {
     font-family: 'Fraunces', serif;
     font-size: clamp(2.8rem, 6vw, 4.5rem);
     font-weight: 900; line-height: 1.05;
-    color: var(--white);
-    margin-bottom: 1.2rem;
+    color: var(--white); margin-bottom: 1.2rem;
   }
   .hero h1 em { color: var(--coral); font-style: normal; }
-  .hero p {
-    font-size: 1.1rem; color: rgba(255,255,255,0.75);
-    margin-bottom: 2rem; max-width: 480px;
-  }
+  .hero p { font-size: 1.1rem; color: rgba(255,255,255,0.75); margin-bottom: 2rem; max-width: 480px; }
   .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
   .btn-primary {
     background: var(--coral); color: var(--white);
     padding: 0.85rem 2rem; border-radius: 10px;
     font-weight: 600; font-size: 1rem;
     text-decoration: none; border: none; cursor: pointer;
-    transition: transform 0.15s, background 0.2s;
-    display: inline-block;
+    transition: transform 0.15s, background 0.2s; display: inline-block;
   }
   .btn-primary:hover { background: #e05a28; transform: translateY(-2px); }
   .btn-ghost {
@@ -108,220 +149,174 @@
     padding: 0.85rem 2rem; border-radius: 10px;
     font-weight: 600; font-size: 1rem;
     text-decoration: none; border: 2px solid rgba(255,255,255,0.35); cursor: pointer;
-    transition: border-color 0.2s, transform 0.15s;
-    display: inline-block;
+    transition: border-color 0.2s, transform 0.15s; display: inline-block;
   }
   .btn-ghost:hover { border-color: var(--white); transform: translateY(-2px); }
 
-  /* Live ticker */
   .hero-stats {
     position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
     display: flex; flex-direction: column; gap: 1.2rem;
   }
   .stat-card {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
     border-radius: 16px; padding: 1.2rem 1.6rem;
-    min-width: 170px; backdrop-filter: blur(6px);
-    text-align: center;
+    min-width: 170px; backdrop-filter: blur(6px); text-align: center;
   }
-  .stat-num {
-    font-family: 'Fraunces', serif;
-    font-size: 2rem; font-weight: 700; color: var(--white);
-    display: block;
-  }
+  .stat-num { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; color: var(--white); display: block; }
   .stat-num.coral { color: var(--coral); }
   .stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; text-transform: uppercase; }
 
-  /* ── CATEGORIES ── */
+  /* ══════════════════════════════════════════
+     SECTIONS
+  ══════════════════════════════════════════ */
   .section { padding: 5rem 5%; }
   .section-header { text-align: center; margin-bottom: 3rem; }
-  .section-header h2 {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    font-weight: 700; margin-bottom: 0.6rem;
-  }
+  .section-header h2 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; margin-bottom: 0.6rem; }
   .section-header p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto; }
 
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.2rem;
-  }
+  .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
   .cat-card {
-    background: var(--off); border-radius: 16px;
-    padding: 2rem 1.5rem; text-align: center;
-    border: 2px solid transparent;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
+    background: var(--off); border-radius: 16px; padding: 2rem 1.5rem; text-align: center;
+    border: 2px solid transparent; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; cursor: pointer;
   }
-  .cat-card:hover {
-    border-color: var(--coral);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(255,107,53,0.12);
-  }
+  .cat-card:hover { border-color: var(--coral); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(255,107,53,0.12); }
   .cat-icon { font-size: 2.4rem; margin-bottom: 0.8rem; display: block; }
   .cat-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
   .cat-card p { font-size: 0.82rem; color: var(--muted); }
 
-  /* ── HOW IT WORKS ── */
   .how-bg { background: var(--sky-bg); }
-  .steps {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0; position: relative;
-  }
-  .step {
-    padding: 2rem 1.5rem; text-align: center; position: relative;
-  }
-  .step:not(:last-child)::after {
-    content: '→';
-    position: absolute; right: -0.4rem; top: 2.2rem;
-    font-size: 1.4rem; color: var(--coral);
-    display: block;
-  }
-  .step-num {
-    width: 52px; height: 52px;
-    background: var(--coral); color: var(--white);
-    border-radius: 50%;
-    font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 1rem;
-  }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; position: relative; }
+  .step { padding: 2rem 1.5rem; text-align: center; position: relative; }
+  .step:not(:last-child)::after { content: '→'; position: absolute; right: -0.4rem; top: 2.2rem; font-size: 1.4rem; color: var(--coral); }
+  .step-num { width: 52px; height: 52px; background: var(--coral); color: var(--white); border-radius: 50%; font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
   .step h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
   .step p { font-size: 0.85rem; color: var(--muted); }
 
-  /* ── WHO WE SERVE ── */
-  .roles-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-  .role-card {
-    border-radius: 20px; overflow: hidden;
-    border: 1px solid var(--border);
-    transition: box-shadow 0.2s;
-  }
+  .roles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .role-card { border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: box-shadow 0.2s; }
   .role-card:hover { box-shadow: 0 16px 48px rgba(26,43,74,0.1); }
-  .role-header {
-    padding: 1.8rem 1.8rem 1rem;
-    display: flex; align-items: center; gap: 1rem;
-  }
-  .role-avatar {
-    width: 56px; height: 56px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.6rem;
-  }
+  .role-header { padding: 1.8rem 1.8rem 1rem; display: flex; align-items: center; gap: 1rem; }
+  .role-avatar { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
   .role-avatar.food { background: #FFF3E0; }
   .role-avatar.clothes { background: #E8F5E9; }
   .role-avatar.ngo { background: #E3F2FD; }
   .role-card h3 { font-size: 1.05rem; font-weight: 600; }
-  .role-card .role-tag {
-    font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;
-  }
+  .role-card .role-tag { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
   .role-body { padding: 0 1.8rem 1.8rem; }
   .role-body p { font-size: 0.88rem; color: var(--muted); margin-bottom: 1rem; }
   .role-features { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
   .role-features li { font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
   .role-features li::before { content: '✓'; color: var(--green); font-weight: 700; }
 
-  /* ── IMPACT ── */
   .impact-bg { background: var(--navy); }
-  .impact-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-  .impact-card {
-    text-align: center; padding: 2rem 1rem;
-    border-radius: 16px; background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  .impact-num {
-    font-family: 'Fraunces', serif;
-    font-size: 2.8rem; font-weight: 700; color: var(--coral);
-    display: block;
-  }
+  .impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+  .impact-card { text-align: center; padding: 2rem 1rem; border-radius: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
+  .impact-num { font-family: 'Fraunces', serif; font-size: 2.8rem; font-weight: 700; color: var(--coral); display: block; }
   .impact-label { font-size: 0.85rem; color: rgba(255,255,255,0.65); margin-top: 0.3rem; }
   .impact-bg .section-header h2 { color: var(--white); }
   .impact-bg .section-header p { color: rgba(255,255,255,0.6); }
 
-  /* ── CTA / CONTACT ── */
+  /* ══════════════════════════════════════════
+     TRANSPARENCY STRIP — unique feature teaser
+  ══════════════════════════════════════════ */
+  .transparency-strip {
+    background: linear-gradient(135deg, #0D1F38 0%, #1A2B4A 100%);
+    padding: 4rem 5%;
+  }
+  .transparency-strip .section-header h2 { color: var(--white); }
+  .transparency-strip .section-header p { color: rgba(255,255,255,0.6); }
+  .track-steps {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem; margin-bottom: 2.5rem;
+  }
+  .track-step {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 1.5rem;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .track-step:hover { background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.3); }
+  .track-step-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+  .track-step h4 { color: var(--white); font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .track-step p { color: rgba(255,255,255,0.5); font-size: 0.8rem; }
+  .track-step .step-badge {
+    display: inline-block; background: var(--coral); color: white;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem; border-radius: 20px; margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+  .transparency-cta { text-align: center; }
+  .btn-coral-outline {
+    border: 2px solid var(--coral); color: var(--coral);
+    background: transparent; padding: 0.85rem 2rem; border-radius: 10px;
+    font-weight: 600; font-size: 1rem; cursor: pointer;
+    text-decoration: none; display: inline-block;
+    transition: background 0.2s, color 0.2s;
+  }
+  .btn-coral-outline:hover { background: var(--coral); color: white; }
+
+  /* ══════════════════════════════════════════
+     NGO TEASER + CONTACT
+  ══════════════════════════════════════════ */
+  .ngo-teaser-bg { background: var(--off); }
+  .ngo-teaser-cta { text-align: center; margin-top: 1rem; }
   .cta-section { background: var(--off); }
-  .cta-box {
-    background: var(--white);
-    border-radius: 24px;
-    padding: 3rem;
-    box-shadow: 0 4px 24px rgba(26,43,74,0.08);
-    max-width: 560px; margin: 0 auto; text-align: center;
-  }
-  .cta-box h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 2rem; font-weight: 700; margin-bottom: 0.7rem;
-  }
+  .cta-box { background: var(--white); border-radius: 24px; padding: 3rem; box-shadow: 0 4px 24px rgba(26,43,74,0.08); max-width: 560px; margin: 0 auto; text-align: center; }
+  .cta-box h2 { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; margin-bottom: 0.7rem; }
   .cta-box p { color: var(--muted); margin-bottom: 1.8rem; font-size: 0.95rem; }
   .input-row { display: flex; gap: 0.6rem; }
-  .input-row input {
-    flex: 1; padding: 0.8rem 1rem;
-    border: 1.5px solid var(--border); border-radius: 10px;
-    font-size: 0.95rem; font-family: 'Inter', sans-serif;
-    outline: none; transition: border-color 0.2s;
-  }
+  .input-row input { flex: 1; padding: 0.8rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-size: 0.95rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
   .input-row input:focus { border-color: var(--coral); }
-  .success-msg {
-    display: none; margin-top: 1rem;
-    background: rgba(46,204,113,0.1); color: #1a7a3c;
-    border-radius: 8px; padding: 0.7rem 1rem;
-    font-size: 0.9rem; font-weight: 600;
-  }
-
+  .success-msg { display: none; margin-top: 1rem; background: rgba(46,204,113,0.1); color: #1a7a3c; border-radius: 8px; padding: 0.7rem 1rem; font-size: 0.9rem; font-weight: 600; }
   .util-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
-  .util-btn {
-    background: var(--off); border: 1.5px solid var(--border);
-    color: var(--navy); padding: 0.6rem 1.2rem;
-    border-radius: 8px; font-size: 0.85rem; font-weight: 500;
-    cursor: pointer; transition: background 0.2s, border-color 0.2s;
-    display: flex; align-items: center; gap: 0.4rem;
-  }
+  .util-btn { background: var(--off); border: 1.5px solid var(--border); color: var(--navy); padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
   .util-btn:hover { border-color: var(--coral); background: rgba(255,107,53,0.05); }
-  #location-display {
-    margin-top: 0.8rem; font-size: 0.82rem; color: var(--muted);
-    min-height: 1.2rem;
-  }
+  #location-display { margin-top: 0.8rem; font-size: 0.82rem; color: var(--muted); min-height: 1.2rem; }
 
-  /* ── FOOTER ── */
-  footer {
-    background: var(--navy); color: rgba(255,255,255,0.6);
-    text-align: center; padding: 2rem 5%;
-    font-size: 0.82rem;
-  }
+  footer { background: var(--navy); color: rgba(255,255,255,0.6); text-align: center; padding: 2rem 5%; font-size: 0.82rem; }
   footer strong { color: var(--white); }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     .hero-stats { display: none; }
     .hero { min-height: 70vh; }
     .step:not(:last-child)::after { display: none; }
     .input-row { flex-direction: column; }
   }
-
-  /* ── ANIMATIONS ── */
-  @keyframes countUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .stat-num { animation: countUp 0.8s ease both; }
-
-  /* ── NGO PARTNERS TEASER (homepage) ── */
-  .ngo-teaser-bg { background: var(--off); }
-  .ngo-teaser-cta { text-align: center; margin-top: 1rem; }
 </style>
 </head>
 <body>
 
+<!-- ══════════════════════════════════════════
+     SPLASH SCREEN
+══════════════════════════════════════════ -->
+<div id="splash">
+  <div class="splash-logo-wrap">
+    <video id="splash-video" autoplay muted playsinline loop>
+      <source src="Untitled_design__9_.mp4" type="video/mp4">
+    </video>
+    <div class="splash-wordmark">Hope<em>Share</em></div>
+  </div>
+  <div class="splash-tagline">Give what you can. Change a life.</div>
+  <div class="splash-bar-wrap">
+    <div class="splash-bar"></div>
+  </div>
+</div>
+
 <!-- ── NAV ── -->
 <header>
-  <a href="#" class="logo">Hope<span>Share</span></a>
+  <a href="index.html" class="logo">
+    <video class="logo-vid" autoplay muted playsinline loop>
+      <source src="Untitled_design__9_.mp4" type="video/mp4">
+    </video>
+    Hope<span>Share</span>
+  </a>
   <nav>
     <a href="#about">Who We Serve</a>
     <a href="#how">How It Works</a>
     <a href="ngo-partners.html">Partner NGOs</a>
     <a href="gallery.html">Gallery</a>
-    <a href="#contact" class="nav-cta">Donate Now</a>
+    <a href="donate.html" class="nav-cta">Donate Now</a>
   </nav>
 </header>
 
@@ -332,11 +327,10 @@
     <h1>Give what you can.<br><em>Change a life.</em></h1>
     <p>HopeShare connects donors with verified NGOs — donate food, clothes, books, medicine, and more. No item too small.</p>
     <div class="hero-btns">
-      <a href="#contact" class="btn-primary">Start Donating</a>
+      <a href="donate.html" class="btn-primary">Start Donating</a>
       <a href="#how" class="btn-ghost">See How It Works</a>
     </div>
   </div>
-
   <div class="hero-stats">
     <div class="stat-card">
       <span class="stat-num coral" id="counter-meals">0</span>
@@ -360,34 +354,28 @@
     <p>HopeShare accepts all kinds of surplus and secondhand items — not just food.</p>
   </div>
   <div class="categories-grid">
-    <div class="cat-card">
-      <span class="cat-icon"></span>
-      <h3>Food</h3>
+    <div class="cat-card" onclick="location.href='donate.html?cat=food'">
+      <span class="cat-icon">🍛</span><h3>Food</h3>
       <p>Surplus meals from events, caterers, and restaurants</p>
     </div>
-    <div class="cat-card">
-      <span class="cat-icon"></span>
-      <h3>Clothes</h3>
+    <div class="cat-card" onclick="location.href='donate.html?cat=clothes'">
+      <span class="cat-icon">👕</span><h3>Clothes</h3>
       <p>Gently used clothing and shoes for all ages</p>
     </div>
-    <div class="cat-card">
-      <span class="cat-icon"></span>
-      <h3>Books</h3>
+    <div class="cat-card" onclick="location.href='donate.html?cat=books'">
+      <span class="cat-icon">📚</span><h3>Books</h3>
       <p>Textbooks, storybooks, and educational materials</p>
     </div>
-    <div class="cat-card">
-      <span class="cat-icon"></span>
-      <h3>Medicine</h3>
+    <div class="cat-card" onclick="location.href='donate.html?cat=medicine'">
+      <span class="cat-icon">💊</span><h3>Medicine</h3>
       <p>Unused, unexpired medicines and health supplies</p>
     </div>
-    <div class="cat-card">
-      <span class="cat-icon"></span>
-      <h3>Furniture</h3>
+    <div class="cat-card" onclick="location.href='donate.html?cat=furniture'">
+      <span class="cat-icon">🪑</span><h3>Furniture</h3>
       <p>Household items, bedding, and basic furnishings</p>
     </div>
-    <div class="cat-card">
-      <span class="cat-icon"></span>
-      <h3>Toys & More</h3>
+    <div class="cat-card" onclick="location.href='donate.html?cat=other'">
+      <span class="cat-icon">🎁</span><h3>Toys & More</h3>
       <p>Toys, stationery, and anything useful to a family in need</p>
     </div>
   </div>
@@ -397,29 +385,13 @@
 <section class="section how-bg" id="how">
   <div class="section-header">
     <h2>How It Works</h2>
-    <p>Three simple steps from your doorstep to someone in need.</p>
+    <p>Four simple steps from your doorstep to someone in need.</p>
   </div>
   <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Register</h3>
-      <p>Sign up as a Donor, Venue, or NGO. Takes under a minute.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>Post a Donation</h3>
-      <p>List what you have — item type, quantity, and pickup window.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>NGO Collects</h3>
-      <p>A verified NGO nearby is notified and arranges pickup.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <h3>Track Impact</h3>
-      <p>Get a confirmation and see the difference your donation made.</p>
-    </div>
+    <div class="step"><div class="step-num">1</div><h3>Register</h3><p>Sign up as a Donor, Venue, or NGO. Takes under a minute.</p></div>
+    <div class="step"><div class="step-num">2</div><h3>Post a Donation</h3><p>List what you have — item type, quantity, and pickup window.</p></div>
+    <div class="step"><div class="step-num">3</div><h3>NGO Collects</h3><p>A verified NGO nearby is notified and arranges pickup.</p></div>
+    <div class="step"><div class="step-num">4</div><h3>Track Impact</h3><p>Get a Donation ID and track your item all the way to delivery.</p></div>
   </div>
 </section>
 
@@ -430,14 +402,10 @@
     <p>HopeShare works for everyone on both sides of generosity.</p>
   </div>
   <div class="roles-grid">
-
     <div class="role-card">
       <div class="role-header">
         <div class="role-avatar food">🍽️</div>
-        <div>
-          <div class="role-tag">Donors</div>
-          <h3>Event Venues & Caterers</h3>
-        </div>
+        <div><div class="role-tag">Donors</div><h3>Event Venues & Caterers</h3></div>
       </div>
       <div class="role-body">
         <p>Post surplus food and items left over from events before they go to waste.</p>
@@ -448,14 +416,10 @@
         </ul>
       </div>
     </div>
-
     <div class="role-card">
       <div class="role-header">
-        <div class="role-avatar clothes"></div>
-        <div>
-          <div class="role-tag">Individuals</div>
-          <h3>Households & Individuals</h3>
-        </div>
+        <div class="role-avatar clothes">👔</div>
+        <div><div class="role-tag">Individuals</div><h3>Households & Individuals</h3></div>
       </div>
       <div class="role-body">
         <p>Clear out clothes, books, or furniture and give them a second life.</p>
@@ -466,14 +430,10 @@
         </ul>
       </div>
     </div>
-
     <div class="role-card">
       <div class="role-header">
-        <div class="role-avatar ngo"></div>
-        <div>
-          <div class="role-tag">Receivers</div>
-          <h3>NGOs & Shelters</h3>
-        </div>
+        <div class="role-avatar ngo">🏥</div>
+        <div><div class="role-tag">Receivers</div><h3>NGOs & Shelters</h3></div>
       </div>
       <div class="role-body">
         <p>Receive timely alerts for available donations in your service area.</p>
@@ -484,45 +444,74 @@
         </ul>
       </div>
     </div>
-
   </div>
 </section>
 
 <!-- ── IMPACT NUMBERS ── -->
 <section class="section impact-bg">
-  <div class="section-header">
-    <h2>Our Impact So Far</h2>
-    <p>Small acts of giving, measured in real change.</p>
-  </div>
+  <div class="section-header"><h2>Our Impact So Far</h2><p>Small acts of giving, measured in real change.</p></div>
   <div class="impact-grid">
-    <div class="impact-card">
-      <span class="impact-num">12,400+</span>
-      <div class="impact-label">Meals Distributed</div>
+    <div class="impact-card"><span class="impact-num">12,400+</span><div class="impact-label">Meals Distributed</div></div>
+    <div class="impact-card"><span class="impact-num">3,200+</span><div class="impact-label">Clothes Donated</div></div>
+    <div class="impact-card"><span class="impact-num">840+</span><div class="impact-label">Books Shared</div></div>
+    <div class="impact-card"><span class="impact-num">58</span><div class="impact-label">NGO Partners</div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     UNIQUE FEATURE: DONATION TRANSPARENCY
+══════════════════════════════════════════ -->
+<section class="transparency-strip">
+  <div class="section-header">
+    <h2>Know Where Your Donation Goes</h2>
+    <p>Most platforms leave donors in the dark. We don't. Every donation gets a live tracking ID — follow it from your hands to the people it feeds.</p>
+  </div>
+  <div class="track-steps">
+    <div class="track-step">
+      <div class="step-badge">Step 1</div>
+      <div class="track-step-icon">📝</div>
+      <h4>You Submit</h4>
+      <p>Get a unique Donation ID (e.g. HS-2026-00142) instantly</p>
     </div>
-    <div class="impact-card">
-      <span class="impact-num">3,200+</span>
-      <div class="impact-label">Clothes Donated</div>
+    <div class="track-step">
+      <div class="step-badge">Step 2</div>
+      <div class="track-step-icon">📢</div>
+      <h4>NGO Notified</h4>
+      <p>Nearest verified NGO gets an alert within minutes</p>
     </div>
-    <div class="impact-card">
-      <span class="impact-num">840+</span>
-      <div class="impact-label">Books Shared</div>
+    <div class="track-step">
+      <div class="step-badge">Step 3</div>
+      <div class="track-step-icon">🚗</div>
+      <h4>Pickup with Proof</h4>
+      <p>Driver uploads a photo when they collect your item</p>
     </div>
-    <div class="impact-card">
-      <span class="impact-num">58</span>
-      <div class="impact-label">NGO Partners</div>
+    <div class="track-step">
+      <div class="step-badge">Step 4</div>
+      <div class="track-step-icon">🍽️</div>
+      <h4>Delivered & Confirmed</h4>
+      <p>NGO uploads final photo of food/items being served</p>
     </div>
+    <div class="track-step">
+      <div class="step-badge">Step 5</div>
+      <div class="track-step-icon">🏅</div>
+      <h4>Your Certificate</h4>
+      <p>Download a personalised digital certificate of impact</p>
+    </div>
+  </div>
+  <div class="transparency-cta">
+    <a href="track.html" class="btn-coral-outline">Track a Donation →</a>
+    &nbsp;&nbsp;
+    <a href="donate.html" class="btn-primary">Donate & Get Your ID</a>
   </div>
 </section>
 
 <!-- ── NGO PARTNERS TEASER ── -->
-<section class="section ngo-teaser-bg" id="ngo-teaser">
+<section class="section ngo-teaser-bg">
   <div class="section-header">
     <h2>Trusted by 58+ NGOs Across Bengaluru</h2>
     <p>Every donation is routed through a verified, trusted NGO partner — see who we work with.</p>
   </div>
-  <div class="ngo-teaser-cta">
-    <a href="ngo-partners.html" class="btn-primary">View Our NGO Partners →</a>
-  </div>
+  <div class="ngo-teaser-cta"><a href="ngo-partners.html" class="btn-primary">View Our NGO Partners →</a></div>
 </section>
 
 <!-- ── CONTACT / CTA ── -->
@@ -534,17 +523,15 @@
       <input type="email" id="emailInput" placeholder="Enter your email">
       <button class="btn-primary" onclick="submitForm()">Sign Up</button>
     </div>
-    <div class="success-msg" id="formMsg"> You're in! We'll be in touch soon.</div>
-
+    <div class="success-msg" id="formMsg">✅ You're in! We'll be in touch soon.</div>
     <div class="util-btns">
-      <button class="util-btn" onclick="getLocation()"> Share Location</button>
-      <button class="util-btn" onclick="copyNumber()"> Copy NGO Helpline</button>
+      <button class="util-btn" onclick="getLocation()">📍 Share Location</button>
+      <button class="util-btn" onclick="copyNumber()">📋 Copy NGO Helpline</button>
     </div>
     <div id="location-display"></div>
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
 <footer>
   <strong>HopeShare</strong> — MCA · Full Stack Development · CHRIST University · 2026
 </footer>
@@ -552,7 +539,14 @@
 <audio id="successAudio"><source src="audio/success.mp3" type="audio/mpeg"></audio>
 
 <script>
-  /* ── Animated counters ── */
+  // ── Splash screen ──
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('hide');
+    }, 2600);
+  });
+
+  // ── Counters ──
   function animateCount(id, target, duration) {
     const el = document.getElementById(id);
     let start = 0, step = target / (duration / 16);
@@ -563,18 +557,18 @@
     };
     requestAnimationFrame(tick);
   }
-  window.addEventListener('load', () => {
+  // Start counters after splash
+  setTimeout(() => {
     animateCount('counter-meals', 247, 1800);
     animateCount('counter-items', 1053, 2000);
     animateCount('counter-ngos', 58, 1200);
-  });
+  }, 2800);
 
-  /* ── Form ── */
+  // ── Form ──
   window.onload = function() {
     const saved = localStorage.getItem('hs_email');
     if (saved) document.getElementById('emailInput').value = saved;
   };
-
   function submitForm() {
     const input = document.getElementById('emailInput');
     const email = input.value.trim();
@@ -582,30 +576,57 @@
     localStorage.setItem('hs_email', email);
     sessionStorage.setItem('currentUser', email);
     document.getElementById('formMsg').style.display = 'block';
-    const audio = document.getElementById('successAudio');
-    if (audio) audio.play().catch(() => {});
+    document.getElementById('successAudio').play().catch(() => {});
     if (Notification.permission === 'granted') {
       new Notification('Welcome to HopeShare!', { body: 'Your registration was successful.' });
-    } else {
-      Notification.requestPermission();
-    }
+    } else { Notification.requestPermission(); }
     input.value = '';
   }
 
-  /* ── Geolocation ── */
+  // ── Geolocation ──
   function getLocation() {
     const display = document.getElementById('location-display');
     if (!navigator.geolocation) { display.textContent = 'Geolocation not supported.'; return; }
-    display.textContent = 'Locating…';
+    display.textContent = '⏳ Locating…';
     navigator.geolocation.getCurrentPosition(
-      pos => {
-        display.textContent = `📍 Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`;
-      },
+      pos => { display.textContent = `📍 Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`; },
       () => { display.textContent = 'Unable to retrieve location.'; }
     );
   }
 
+  // ── Clipboard ──
+  async function copyNumber() {
+    try { await navigator.clipboard.writeText('1800-HOPE-SHARE'); alert('✅ NGO Helpline copied: 1800-HOPE-SHARE'); }
+    catch(_) { alert('Helpline: 1800-HOPE-SHARE'); }
+  }
 
+  // ── mouseover / mouseout events (Exercise-3 requirement) ──
+  document.querySelectorAll('.cat-card').forEach(card => {
+    card.addEventListener('mouseover', function() {
+      this.style.transform = 'translateY(-6px)';
+      this.style.boxShadow = '0 16px 40px rgba(255,107,53,0.2)';
+    });
+    card.addEventListener('mouseout', function() {
+      this.style.transform = '';
+      this.style.boxShadow = '';
+    });
+  });
+
+  // ── resize event ──
+  window.addEventListener('resize', function() {
+    console.log('Window resized to: ' + window.innerWidth + 'px');
+  });
+
+  // ── keyup event — live email validation hint ──
+  document.getElementById('emailInput')?.addEventListener('keyup', function() {
+    if (this.value.includes('@') && !this.value.includes('.')) {
+      this.style.borderColor = '#F59E0B';
+    } else if (this.value.includes('@') && this.value.includes('.')) {
+      this.style.borderColor = '#2ECC71';
+    } else {
+      this.style.borderColor = '';
+    }
+  });
 </script>
 </body>
 </html>

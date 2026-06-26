@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate — HopeShare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --navy:#1A2B4A; --coral:#FF6B35; --green:#2ECC71; --white:#FFFFFF; --off:#F8F9FA; --muted:#6B7280; --border:#E5E7EB; }
+  body { font-family:'Inter',sans-serif; background:var(--off); color:var(--navy); line-height:1.6; }
+
+  /* NAV */
+  header { position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.95); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:0 5%; display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .logo { font-family:'Fraunces',serif; font-weight:900; font-size:1.4rem; color:var(--navy); text-decoration:none; display:flex; align-items:center; gap:0.5rem; }
+  .logo-vid { width:30px; height:30px; border-radius:7px; object-fit:cover; }
+  .logo span { color:var(--coral); }
+  nav { display:flex; gap:2rem; align-items:center; }
+  nav a { text-decoration:none; color:var(--navy); font-size:0.9rem; font-weight:500; transition:color 0.2s; }
+  nav a:hover { color:var(--coral); }
+  .nav-cta { background:var(--coral); color:var(--white)!important; padding:0.5rem 1.2rem; border-radius:8px; }
+
+  /* PAGE HERO */
+  .page-hero { background:linear-gradient(135deg,var(--navy) 0%,#2C4A7C 60%,#1A2B4A 100%); padding:3.5rem 5%; text-align:center; }
+  .page-hero-eyebrow { display:inline-block; background:rgba(255,107,53,0.2); color:var(--coral); font-size:0.8rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:0.35rem 0.9rem; border-radius:20px; margin-bottom:1.2rem; }
+  .page-hero h1 { font-family:'Fraunces',serif; font-size:clamp(2rem,5vw,3rem); font-weight:900; color:var(--white); margin-bottom:0.6rem; }
+  .page-hero p { color:rgba(255,255,255,0.7); max-width:500px; margin:0 auto; }
+
+  /* LAYOUT */
+  .donate-layout { display:grid; grid-template-columns:1fr 380px; gap:2rem; max-width:1100px; margin:0 auto; padding:3rem 5%; }
+  @media(max-width:900px){ .donate-layout{ grid-template-columns:1fr; } }
+
+  /* FORM CARD */
+  .form-card { background:var(--white); border-radius:20px; padding:2.5rem; box-shadow:0 4px 24px rgba(26,43,74,0.08); }
+  .form-card h2 { font-family:'Fraunces',serif; font-size:1.5rem; font-weight:700; margin-bottom:0.3rem; }
+  .form-card .sub { color:var(--muted); font-size:0.88rem; margin-bottom:2rem; }
+
+  /* CATEGORY TABS */
+  .cat-tabs { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:2rem; }
+  .cat-tab { padding:0.5rem 1rem; border-radius:20px; border:1.5px solid var(--border); background:var(--white); font-size:0.82rem; font-weight:500; cursor:pointer; color:var(--muted); transition:all 0.18s; display:flex; align-items:center; gap:0.3rem; }
+  .cat-tab:hover { border-color:var(--coral); }
+  .cat-tab.active { background:var(--coral); border-color:var(--coral); color:var(--white); }
+
+  /* FORM FIELDS */
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+  .form-group { display:flex; flex-direction:column; gap:0.35rem; margin-bottom:1rem; }
+  .form-group.full { grid-column:1/-1; }
+  label { font-size:0.82rem; font-weight:600; color:#444; }
+  input, select, textarea {
+    padding:0.7rem 0.9rem; border:1.5px solid var(--border); border-radius:10px;
+    font-size:0.9rem; font-family:'Inter',sans-serif; outline:none; transition:border-color 0.2s;
+    background:white;
+  }
+  input:focus, select:focus, textarea:focus { border-color:var(--coral); }
+  textarea { resize:vertical; min-height:80px; }
+
+  /* SECTION DIVIDER */
+  .form-section-label { font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--coral); margin:1.5rem 0 1rem; padding-bottom:0.5rem; border-bottom:2px solid rgba(255,107,53,0.15); }
+
+  /* CAMERA */
+  .camera-box { background:var(--off); border-radius:12px; overflow:hidden; border:1.5px dashed var(--border); }
+  #videoEl, #capturedImg { width:100%; max-height:200px; object-fit:cover; display:none; }
+  .cam-placeholder { padding:2.5rem 1rem; text-align:center; color:var(--muted); font-size:0.85rem; }
+  .cam-placeholder span { font-size:2rem; display:block; margin-bottom:0.5rem; }
+  .cam-btns { display:flex; gap:0.5rem; padding:0.8rem; flex-wrap:wrap; }
+  .cam-btn { padding:0.4rem 0.9rem; border-radius:8px; border:1.5px solid var(--border); background:white; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.15s; color:var(--navy); }
+  .cam-btn:hover { border-color:var(--coral); color:var(--coral); }
+
+  /* MAP */
+  #mapBox { display:none; background:linear-gradient(135deg,#E8F4FD,#D4EDE3); border-radius:12px; height:160px; position:relative; overflow:hidden; border:1.5px solid #A8D5C1; margin-top:0.8rem; align-items:center; justify-content:center; flex-direction:column; }
+  #mapBox.show { display:flex; }
+  .map-dot { width:14px; height:14px; background:var(--coral); border-radius:50%; border:3px solid white; box-shadow:0 2px 8px rgba(255,107,53,0.4); position:absolute; }
+  .map-pulse { width:14px; height:14px; border-radius:50%; background:var(--coral); position:absolute; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%{transform:scale(1);opacity:0.8} 100%{transform:scale(3.5);opacity:0} }
+  #mapCoords { font-size:0.78rem; color:#555; margin-top:2.5rem; z-index:2; position:relative; }
+
+  /* SUBMIT */
+  .btn-submit { width:100%; padding:1rem; background:var(--coral); color:white; border:none; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; transition:background 0.2s, transform 0.15s; font-family:'Inter',sans-serif; margin-top:1rem; }
+  .btn-submit:hover { background:#e05a28; transform:translateY(-2px); }
+
+  /* SUCCESS PANEL */
+  #successPanel { display:none; background:white; border-radius:20px; padding:2.5rem; text-align:center; box-shadow:0 4px 24px rgba(26,43,74,0.08); }
+  .success-icon { font-size:4rem; margin-bottom:1rem; }
+  .success-panel h2 { font-family:'Fraunces',serif; font-size:1.8rem; color:var(--navy); margin-bottom:0.5rem; }
+  .donation-id-box { background:var(--off); border:2px dashed var(--coral); border-radius:12px; padding:1.2rem; margin:1.5rem 0; }
+  .donation-id-box .did-label { font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4rem; }
+  .donation-id-box .did-value { font-family:'Fraunces',serif; font-size:2rem; font-weight:900; color:var(--coral); letter-spacing:0.04em; }
+  .success-actions { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; margin-top:1.5rem; }
+  .btn-outline { padding:0.7rem 1.4rem; border-radius:10px; border:2px solid var(--coral); color:var(--coral); background:transparent; font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; text-decoration:none; display:inline-block; }
+  .btn-outline:hover { background:var(--coral); color:white; }
+
+  /* SIDEBAR */
+  .sidebar { display:flex; flex-direction:column; gap:1.5rem; }
+  .sidebar-card { background:white; border-radius:16px; padding:1.5rem; box-shadow:0 2px 12px rgba(26,43,74,0.06); }
+  .sidebar-card h3 { font-family:'Fraunces',serif; font-size:1.05rem; font-weight:700; margin-bottom:0.3rem; }
+  .sidebar-card p { font-size:0.83rem; color:var(--muted); }
+  .device-row { display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border); font-size:0.82rem; }
+  .device-row:last-child { border-bottom:none; }
+  .device-row .key { color:var(--muted); }
+  .device-row .val { font-weight:600; }
+  /* Track link */
+  .track-cta-card { background:linear-gradient(135deg,var(--navy),#2C4A7C); border-radius:16px; padding:1.5rem; color:white; }
+  .track-cta-card h3 { font-family:'Fraunces',serif; font-size:1rem; margin-bottom:0.4rem; }
+  .track-cta-card p { font-size:0.8rem; color:rgba(255,255,255,0.6); margin-bottom:1rem; }
+  .track-input-row { display:flex; gap:0.5rem; }
+  .track-input-row input { flex:1; padding:0.6rem 0.8rem; border-radius:8px; border:none; font-size:0.85rem; outline:none; }
+  .track-btn { background:var(--coral); color:white; border:none; border-radius:8px; padding:0.6rem 1rem; font-size:0.82rem; font-weight:600; cursor:pointer; white-space:nowrap; }
+
+  /* OFFLINE */
+  #offlineBanner { display:none; background:#dc3545; color:white; text-align:center; padding:0.6rem; font-size:0.85rem; font-weight:600; }
+
+  /* TOAST */
+  #toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--navy); color:white; padding:1rem 1.4rem; border-radius:14px; font-size:0.88rem; z-index:999; max-width:300px; box-shadow:0 8px 24px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  #toast.show { transform:translateY(0); opacity:1; }
+  #toast .t-title { font-weight:700; margin-bottom:0.25rem; }
+  #toast .t-body { color:rgba(255,255,255,0.75); font-size:0.8rem; }
+
+  @media(max-width:640px){ .form-row{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div id="offlineBanner">⚠️ You're offline. Some features may not work.</div>
+
+<!-- NAV -->
+<header>
+  <a href="index.html" class="logo">
+    <video class="logo-vid" autoplay muted playsinline loop><source src="Untitled_design__9_.mp4" type="video/mp4"></video>
+    Hope<span>Share</span>
+  </a>
+  <nav>
+    <a href="index.html#about">Who We Serve</a>
+    <a href="index.html#how">How It Works</a>
+    <a href="ngo-partners.html">Partner NGOs</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="donate.html" class="nav-cta">Donate Now</a>
+  </nav>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <span class="page-hero-eyebrow">Make a Difference</span>
+  <h1>Submit Your Donation</h1>
+  <p>Fill in the details below. You'll receive a unique Donation ID to track every step — pickup, delivery, and proof of impact.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="donate-layout">
+
+  <!-- LEFT: FORM -->
+  <div>
+    <!-- DONATE FORM -->
+    <div class="form-card" id="formCard">
+      <h2>Donation Details</h2>
+      <p class="sub">All fields marked * are required. Your donation ID will be generated on submission.</p>
+
+      <!-- CATEGORY TABS -->
+      <div class="cat-tabs" id="catTabs">
+        <button class="cat-tab active" data-cat="food" onclick="setTab(this)">🍛 Food</button>
+        <button class="cat-tab" data-cat="clothes" onclick="setTab(this)">👕 Clothes</button>
+        <button class="cat-tab" data-cat="books" onclick="setTab(this)">📚 Books</button>
+        <button class="cat-tab" data-cat="medicine" onclick="setTab(this)">💊 Medicine</button>
+        <button class="cat-tab" data-cat="furniture" onclick="setTab(this)">🪑 Furniture</button>
+        <button class="cat-tab" data-cat="other" onclick="setTab(this)">🎁 Other</button>
+      </div>
+
+      <!-- DONOR INFO -->
+      <div class="form-section-label">Your Information</div>
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="f_name" placeholder="e.g. Rahul Sharma"></div>
+        <div class="form-group"><label>Mobile Number *</label><input type="tel" id="f_phone" placeholder="10-digit number"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Email</label><input type="email" id="f_email" placeholder="your@email.com"></div>
+        <div class="form-group"><label>Donor Type *</label>
+          <select id="f_type">
+            <option value="">Select type</option>
+            <option>Wedding Hall / Event Venue</option>
+            <option>Caterer / Restaurant</option>
+            <option>Household / Individual</option>
+            <option>Corporate / Office</option>
+            <option>School / College</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ITEM INFO -->
+      <div class="form-section-label">Item Details</div>
+      <div class="form-row">
+        <div class="form-group"><label>Item Name / Description *</label><input type="text" id="f_item" placeholder="e.g. Biryani, 40 portions"></div>
+        <div class="form-group"><label>Quantity *</label><input type="text" id="f_qty" placeholder="e.g. 5 kg / 10 pieces"></div>
+      </div>
+      <div class="form-group">
+        <label>Additional Notes</label>
+        <textarea id="f_notes" placeholder="Any special instructions for pickup, allergen info, condition of clothes, etc."></textarea>
+      </div>
+
+      <!-- PHOTO (Camera API) -->
+      <div class="form-section-label">📸 Add a Photo <span style="font-weight:400;color:var(--muted);font-size:0.75rem;text-transform:none;letter-spacing:0">(recommended — helps NGO prepare)</span></div>
+      <div class="camera-box">
+        <div class="cam-placeholder" id="camPlaceholder"><span>📷</span>Take a photo of your donation</div>
+        <video id="videoEl" autoplay playsinline></video>
+        <img id="capturedImg" alt="Captured photo">
+        <div class="cam-btns">
+          <button class="cam-btn" onclick="startCam()">📷 Open Camera</button>
+          <button class="cam-btn" onclick="captureCam()">📸 Capture</button>
+          <button class="cam-btn" onclick="stopCam()">✕ Stop</button>
+        </div>
+      </div>
+      <canvas id="photoCanvas" style="display:none"></canvas>
+
+      <!-- LOCATION (Geolocation API) -->
+      <div class="form-section-label">📍 Pickup Location <span style="font-weight:400;color:var(--muted);font-size:0.75rem;text-transform:none;letter-spacing:0">(so the NGO knows where to come)</span></div>
+      <button class="cam-btn" style="margin-bottom:0.5rem" onclick="detectLoc()">📍 Detect My Location</button>
+      <span id="locDisplay" style="font-size:0.82rem;color:var(--muted);margin-left:0.5rem;"></span>
+      <div id="mapBox"><div class="map-pulse"></div><div class="map-dot"></div><p id="mapCoords"></p></div>
+
+      <!-- PICKUP TIME -->
+      <div class="form-section-label">🕐 Preferred Pickup Window</div>
+      <div class="form-row">
+        <div class="form-group"><label>Pickup Date *</label><input type="date" id="f_date"></div>
+        <div class="form-group"><label>Pickup Time *</label>
+          <select id="f_time">
+            <option value="">Select window</option>
+            <option>Morning (8am – 11am)</option>
+            <option>Afternoon (12pm – 3pm)</option>
+            <option>Evening (4pm – 7pm)</option>
+            <option>Flexible (Any time)</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-submit" onclick="submitDonation()">✅ Submit Donation & Get My ID</button>
+    </div>
+
+    <!-- SUCCESS PANEL (shown after submit) -->
+    <div id="successPanel">
+      <div class="success-icon">🎉</div>
+      <h2>Donation Submitted!</h2>
+      <p style="color:var(--muted);margin-bottom:0.5rem">Your donation has been received. Save your Donation ID to track it.</p>
+      <div class="donation-id-box">
+        <div class="did-label">Your Donation ID</div>
+        <div class="did-value" id="donationIDDisplay">HS-2026-00000</div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted)">An NGO will be notified shortly. Use the ID below to track pickup, delivery, and download your certificate once confirmed.</p>
+      <div class="success-actions">
+        <button class="btn-outline" onclick="copyDonationID()">📋 Copy ID</button>
+        <a id="trackLink" href="track.html" class="btn-outline">📦 Track Donation</a>
+        <button class="btn-outline" onclick="donateAgain()">+ Donate Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Device Status -->
+    <div class="sidebar-card">
+      <h3>📡 Device Status</h3>
+      <p style="margin-bottom:1rem">APIs active on this page</p>
+      <div class="device-row"><span class="key">Battery</span><span class="val" id="battVal">Checking…</span></div>
+      <div class="device-row"><span class="key">Network</span><span class="val" id="netVal">Checking…</span></div>
+      <div class="device-row"><span class="key">Location</span><span class="val" id="locStatus">Not yet</span></div>
+      <div class="device-row"><span class="key">Camera</span><span class="val" id="camStatus">Not started</span></div>
+      <div class="device-row"><span class="key">Notifications</span><span class="val" id="notifStatus">–</span></div>
+    </div>
+
+    <!-- Track existing donation -->
+    <div class="track-cta-card">
+      <h3>Already donated?</h3>
+      <p>Enter your Donation ID to see live status and proof photos.</p>
+      <div class="track-input-row">
+        <input type="text" id="trackIDInput" placeholder="HS-2026-XXXXX">
+        <button class="track-btn" onclick="goTrack()">Track →</button>
+      </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="sidebar-card">
+      <h3>✅ Tips for a Smooth Pickup</h3>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;margin-top:0.7rem">
+        <li style="font-size:0.83rem;color:var(--muted);display:flex;gap:0.5rem"><span style="color:var(--coral);font-weight:700">•</span>Pack food in sealed containers</li>
+        <li style="font-size:0.83rem;color:var(--muted);display:flex;gap:0.5rem"><span style="color:var(--coral);font-weight:700">•</span>Fold and bag clothes by size</li>
+        <li style="font-size:0.83rem;color:var(--muted);display:flex;gap:0.5rem"><span style="color:var(--coral);font-weight:700">•</span>Check medicine expiry dates</li>
+        <li style="font-size:0.83rem;color:var(--muted);display:flex;gap:0.5rem"><span style="color:var(--coral);font-weight:700">•</span>Keep your phone handy for NGO calls</li>
+        <li style="font-size:0.83rem;color:var(--muted);display:flex;gap:0.5rem"><span style="color:var(--coral);font-weight:700">•</span>Add a photo for faster matching</li>
+      </ul>
+    </div>
+
+    <!-- NGO Helpline -->
+    <div class="sidebar-card" style="background:var(--off)">
+      <h3>📞 NGO Helpline</h3>
+      <p style="margin:0.5rem 0 1rem">Need help with your donation? Call us.</p>
+      <div style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:900;color:var(--coral);margin-bottom:0.8rem">1800-HOPE-SHARE</div>
+      <button class="cam-btn" style="width:100%;justify-content:center" onclick="copyHelpline()">📋 Copy Number</button>
+    </div>
+
+  </div>
+</div>
+
+<footer style="background:var(--navy);color:rgba(255,255,255,0.6);text-align:center;padding:2rem 5%;font-size:0.82rem;">
+  <strong style="color:white">HopeShare</strong> — MCA · Full Stack Development · CHRIST University · 2026
+</footer>
+
+<!-- TOAST -->
+<div id="toast"><div class="t-title" id="tTitle"></div><div class="t-body" id="tBody"></div></div>
+
+<script>
+// ── TOAST ──
+function toast(title, body='', dur=3500) {
+  const el = document.getElementById('toast');
+  document.getElementById('tTitle').textContent = title;
+  document.getElementById('tBody').textContent = body;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+  if (Notification.permission === 'granted') {
+    try { new Notification(title, { body }); } catch(_) {}
+  }
+}
+
+// ── NETWORK INFO API ──
+function checkNetwork() {
+  const el = document.getElementById('netVal');
+  const banner = document.getElementById('offlineBanner');
+  if (!navigator.onLine) { el.textContent = '🔴 Offline'; banner.style.display='block'; return; }
+  const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  el.textContent = c ? `🟢 ${(c.effectiveType||'?').toUpperCase()}` : '🟢 Online';
+  banner.style.display='none';
+}
+checkNetwork();
+window.addEventListener('online', checkNetwork);
+window.addEventListener('offline', checkNetwork);
+
+// ── BATTERY API ──
+async function checkBattery() {
+  const el = document.getElementById('battVal');
+  try {
+    if (!('getBattery' in navigator)) { el.textContent='N/A'; return; }
+    const bat = await navigator.getBattery();
+    const render = () => {
+      const p = Math.round(bat.level * 100);
+      el.textContent = `${bat.charging?'⚡':'🔋'} ${p}%`;
+    };
+    render();
+    bat.addEventListener('levelchange', render);
+    bat.addEventListener('chargingchange', render);
+  } catch(_) { el.textContent='N/A'; }
+}
+checkBattery();
+
+// ── NOTIFICATIONS ──
+function initNotif() {
+  const el = document.getElementById('notifStatus');
+  if (!('Notification' in window)) { el.textContent='Not supported'; return; }
+  if (Notification.permission === 'granted') { el.textContent='✅ Allowed'; return; }
+  Notification.requestPermission().then(p => {
+    el.textContent = p === 'granted' ? '✅ Allowed' : '❌ Denied';
+  });
+}
+initNotif();
+
+// ── CATEGORY TABS ──
+function setTab(btn) {
+  document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── CAMERA API ──
+let stream = null;
+async function startCam() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false });
+    const v = document.getElementById('videoEl');
+    v.srcObject = stream; v.style.display='block';
+    document.getElementById('camPlaceholder').style.display='none';
+    document.getElementById('capturedImg').style.display='none';
+    document.getElementById('camStatus').textContent = '📷 Active';
+    toast('📷 Camera ready', 'Position your donation and tap Capture.');
+  } catch(_) {
+    document.getElementById('camStatus').textContent = '❌ Denied';
+    toast('❌ Camera denied', 'Please allow camera access in your browser.');
+  }
+}
+function captureCam() {
+  const v = document.getElementById('videoEl');
+  const c = document.getElementById('photoCanvas');
+  const img = document.getElementById('capturedImg');
+  if (!stream || v.readyState < 2) { alert('Please start the camera first.'); return; }
+  c.width = v.videoWidth; c.height = v.videoHeight;
+  c.getContext('2d').drawImage(v, 0, 0);
+  img.src = c.toDataURL('image/jpeg', 0.85);
+  img.style.display='block'; v.style.display='none';
+  stopCam();
+  document.getElementById('camStatus').textContent = '✅ Photo taken';
+  toast('📸 Photo captured!', 'Great shot — this will be attached to your donation.');
+}
+function stopCam() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  document.getElementById('videoEl').style.display='none';
+}
+
+// ── GEOLOCATION API ──
+let savedCoords = null;
+function detectLoc() {
+  const disp = document.getElementById('locDisplay');
+  const locSt = document.getElementById('locStatus');
+  disp.textContent = '⏳ Detecting…';
+  if (!navigator.geolocation) { disp.textContent = '❌ Not supported'; return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    savedCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    disp.textContent = `✅ Lat: ${savedCoords.lat.toFixed(4)}, Lng: ${savedCoords.lng.toFixed(4)}`;
+    locSt.textContent = '✅ Detected';
+    localStorage.setItem('hs_location', JSON.stringify(savedCoords));
+    const mapBox = document.getElementById('mapBox');
+    mapBox.classList.add('show');
+    document.getElementById('mapCoords').textContent = `${savedCoords.lat.toFixed(5)}, ${savedCoords.lng.toFixed(5)}`;
+    toast('📍 Location saved', 'NGO will use this for pickup coordination.');
+  }, () => { disp.textContent = '❌ Permission denied'; locSt.textContent = '❌ Denied'; });
+}
+
+// ── GENERATE DONATION ID ──
+function generateID() {
+  const seq = String(Math.floor(Math.random() * 90000) + 10000);
+  return `HS-2026-${seq}`;
+}
+
+// ── SUBMIT ──
+function submitDonation() {
+  const name = document.getElementById('f_name').value.trim();
+  const phone = document.getElementById('f_phone').value.trim();
+  const item = document.getElementById('f_item').value.trim();
+  const qty = document.getElementById('f_qty').value.trim();
+  const type = document.getElementById('f_type').value;
+  if (!name || !phone || !item || !qty || !type) {
+    alert('Please fill in all required (*) fields.'); return;
+  }
+  const cat = document.querySelector('.cat-tab.active').dataset.cat;
+  const id = generateID();
+
+  // Save to localStorage
+  const donation = {
+    id, name, phone, cat, item, qty, type,
+    date: new Date().toISOString(),
+    status: 'submitted',
+    coords: savedCoords,
+    hasPhoto: !!document.getElementById('capturedImg').src && document.getElementById('capturedImg').style.display !== 'none'
+  };
+  localStorage.setItem(`hs_donation_${id}`, JSON.stringify(donation));
+  localStorage.setItem('hs_lastDonationID', id);
+  sessionStorage.setItem('hs_session_donation', id);
+
+  // Show success
+  document.getElementById('formCard').style.display = 'none';
+  const panel = document.getElementById('successPanel');
+  panel.style.display = 'block';
+  document.getElementById('donationIDDisplay').textContent = id;
+  document.getElementById('trackLink').href = `track.html?id=${id}`;
+
+  toast('🎉 Submitted!', `Your Donation ID is ${id}`);
+}
+
+function copyDonationID() {
+  const id = document.getElementById('donationIDDisplay').textContent;
+  navigator.clipboard.writeText(id).then(() => toast('📋 Copied!', `ID ${id} copied to clipboard.`));
+}
+function donateAgain() {
+  document.getElementById('successPanel').style.display = 'none';
+  document.getElementById('formCard').style.display = 'block';
+  document.getElementById('f_name').value = '';
+  document.getElementById('f_item').value = '';
+  document.getElementById('f_qty').value = '';
+}
+function goTrack() {
+  const id = document.getElementById('trackIDInput').value.trim();
+  if (!id) { alert('Please enter a Donation ID'); return; }
+  location.href = `track.html?id=${encodeURIComponent(id)}`;
+}
+async function copyHelpline() {
+  try { await navigator.clipboard.writeText('1800-HOPE-SHARE'); toast('📋 Copied!', 'Helpline number copied.'); }
+  catch(_) { alert('Helpline: 1800-HOPE-SHARE'); }
+}
+
+// ── ON LOAD ──
+window.addEventListener('DOMContentLoaded', () => {
+  // Pre-fill email from index page
+  const em = localStorage.getItem('hs_email');
+  if (em) document.getElementById('f_email').value = em;
+  // Pre-fill date to today
+  document.getElementById('f_date').valueAsDate = new Date();
+  // Set tab from URL param
+  const params = new URLSearchParams(location.search);
+  const cat = params.get('cat');
+  if (cat) {
+    const btn = document.querySelector(`.cat-tab[data-cat="${cat}"]`);
+    if (btn) { document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+  }
+});
+</script>
+</body>
+</html>
